@@ -7,3 +7,6 @@ dist/
 build/
 .pytest_cache/
 .amc/
+
+# 本地架构设计文档，不入库
+docs/architecture.md
