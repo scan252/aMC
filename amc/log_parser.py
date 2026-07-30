@@ -26,6 +26,10 @@ def decrypt_client_log(data: bytes) -> bytes:
     return bytes(out)
 
 
+def _decode_log_text(data: bytes) -> str:
+    return data.decode("utf-8", errors="ignore").lstrip("\ufeff")
+
+
 def is_log_encrypted(data: bytes) -> bool:
     if len(data) < 3:
         return False
@@ -33,7 +37,7 @@ def is_log_encrypted(data: bytes) -> bool:
         return True
     if data[0] == 0:
         decoded = decrypt_client_log(data)
-        return decoded.decode("utf-8", errors="ignore").startswith("Log file open")
+        return _decode_log_text(decoded).startswith("Log file open")
     return False
 
 
@@ -41,7 +45,7 @@ def read_log_content(log_path: Path) -> str:
     raw = log_path.read_bytes()
     if is_log_encrypted(raw):
         raw = decrypt_client_log(raw)
-    return raw.decode("utf-8", errors="ignore")
+    return _decode_log_text(raw)
 
 
 def extract_gacha_urls(content: str) -> list[str]:

@@ -40,7 +40,7 @@ GACHA_URL_PATTERN = (
 
 def discover_log_files() -> list[MacLogLocation]:
     """返回当前 Mac 上已存在的鸣潮日志文件。"""
-    return [loc for loc in MAC_LOG_LOCATIONS if loc.exists()]
+    return [loc for loc in MAC_LOG_LOCATIONS if loc.exists]
 
 
 def find_best_log_file() -> MacLogLocation | None:

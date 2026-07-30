@@ -1,4 +1,5 @@
 import pytest
+from pathlib import Path
 
 from amc.log_parser import decrypt_client_log, extract_gacha_urls, is_log_encrypted
 from amc.models import GachaCredentials, GachaRecord
@@ -44,6 +45,17 @@ class TestLogParser:
     def test_decrypt_plain_text_unchanged(self):
         plain = b"Log file open, hello world"
         assert decrypt_client_log(plain) != plain or not is_log_encrypted(plain)
+
+    def test_detect_mac_encrypted_log_with_bom(self):
+        log_path = (
+            Path.home()
+            / "Library/Containers/com.kurogame.mingchao/Data/Library/Logs/Client/Client.log"
+        )
+        if not log_path.is_file():
+            pytest.skip("本机未安装鸣潮 Mac 客户端日志")
+        with log_path.open("rb") as f:
+            sample = f.read(8192)
+        assert is_log_encrypted(sample)
 
 
 class TestCredentials:
