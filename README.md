@@ -1,123 +1,74 @@
 # aMC
 
-鸣潮 **Mac 原生客户端** 抽卡记录助手（a Mac Client）。
+aMC 是面向《鸣潮》Mac 原生客户端的本地抽卡记录助手。它从游戏日志中提取唤取凭证，直接调用游戏官方接口获取历史记录，并将数据保存在本机。
 
-从 Mac 版鸣潮的沙盒日志中自动提取唤取记录 URL，调用官方 API 抓取全部卡池历史，并保存到本地。
+项目目前处于命令行 MVP 阶段。后续将开发无需额外运行环境、可直接安装的 macOS 原生 GUI 客户端。技术规划见[架构设计](docs/architecture.md)。
 
-## 调研结论
+## 当前功能
 
-GitHub 上同类工具大多面向 **Windows**，核心流程一致，但 Mac 版在日志路径与沙盒机制上有明显差异：
+- 自动发现国服和国际服 Mac 客户端日志
+- 解密新版 `Client.log` 并提取唤取记录 URL
+- 获取全部 13 种卡池的历史记录
+- 按卡池统计总抽数及 5★、4★、3★ 数量
+- 本地保存并增量合并记录，保留官方接口中已过期的历史数据
+- 更新前自动备份数据
+- 按 UID 导出 JSON
 
-| 项目 | 平台 | 获取凭证方式 | 备注 |
-|------|------|-------------|------|
-| [ningnao/wuthering-waves-gacha-record](https://github.com/ningnao/wuthering-waves-gacha-record) | Windows | 读取 `Client.log` + XOR 解密 | Rust + egui，功能完整 |
-| [BJY-STUDIO/wuwa-gacha-analyzer](https://github.com/BJY-STUDIO/wuwa-gacha-analyzer) | Windows | 手动粘贴 JSON / 抓包 | Python，分析能力强 |
-| [dyar7474/WuWa_local_tracker](https://github.com/dyar7474/WuWa_local_tracker) | Windows | 自动扫描日志 | PowerShell，纯本地 |
-| [GoneTone/wuthering-waves-convene-gacha-analyzer](https://github.com/GoneTone/wuthering-waves-convene-gacha-analyzer) | Windows | HTTPS 拦截 | 需管理员权限 |
-| [Luzefiru macOS gist](https://gist.github.com/Luzefiru/b7a59e992a4db9c44cacd9178c5bb673) | **macOS** | grep `Client.log` | 仅提取 URL，无抓取 |
+## 当前环境要求
 
-### Mac 版与 Windows 版的关键区别
-
-1. **日志路径不同**
-   - Windows: `{游戏目录}/Client/Saved/Logs/Client.log`
-   - Mac 国服: `~/Library/Containers/com.kurogame.mingchao/Data/Library/Logs/Client/Client.log`
-   - Mac 国际服: `~/Library/Containers/com.kurogame.wutheringwaves.global/Data/Library/Logs/Client/Client.log`
-
-2. **沙盒机制**：Mac 原生客户端运行在 App Sandbox 内，日志不在游戏安装目录，而在 `Library/Containers` 下。
-
-3. **日志可能加密**：新版客户端的 `Client.log` 可能经过 XOR 加密（魔数 `\xa5\xef\xa5`），需要解密后才能搜索 URL。
-
-4. **API 相同**：抓取数据仍调用 Kuro 官方接口 `gmserver-api.aki-game2.com/net/gacha/record/query`，与 Windows 版一致。
-
-## 功能
-
-- 自动发现 Mac 鸣潮日志（国服 / 国际服）
-- 支持加密日志解密
-- 从日志提取唤取记录 URL
-- 抓取全部 13 种卡池类型
-- 本地 JSON 存储，支持增量合并（保留 API 已过期的历史记录）
-- 命令行工具 `amc`
-
-## 环境要求
-
-- macOS（推荐 12+）
+- macOS
 - Python 3.10+
-- 已安装 Mac 原生鸣潮客户端
+- Mac 原生版《鸣潮》
+
+> Python 仅为当前 MVP 所需；计划中的正式 GUI 版本将打包为独立 macOS 应用，不要求用户安装任何依赖。
 
 ## 安装
 
 ```bash
-# 使用 pip
+git clone https://github.com/scan252/aMC.git
+cd aMC
 pip install -e .
+```
 
-# 或使用 uv
+也可以使用 `uv`：
+
+```bash
 uv pip install -e .
 ```
 
-## 使用方式
+## 使用
 
-### 1. 在游戏中生成日志
-
-1. 启动鸣潮 Mac 版
-2. 进入 **唤取 → 唤取记录** 页面
-3. 等待页面加载完成（此时 URL 会写入 `Client.log`）
-
-> 唤取 URL 约 **1 小时** 内有效，过期后需重新打开游戏内唤取记录页面。
-
-### 2. 检查日志状态
-
-```bash
-amc status
-```
-
-### 3. 提取唤取 URL（可选）
-
-```bash
-amc url
-# URL 会自动复制到剪贴板
-```
-
-### 4. 抓取全部抽卡记录
+1. 启动 Mac 版《鸣潮》。
+2. 打开游戏中的“唤取 → 唤取记录”，等待页面加载完成。
+3. 抓取并保存记录：
 
 ```bash
 amc fetch
 ```
 
-数据默认保存在 `~/.amc/data/{UID}/gacha_data.json`。
+唤取 URL 通常仅在生成后约一小时内有效。如果抓取提示凭证过期，请重新打开游戏内唤取记录页面。
 
-### 5. 导出数据
+数据默认保存在：
 
-```bash
-amc export <UID> -o wuwa_pulls.json
+```text
+~/.amc/data/{UID}/gacha_data.json
 ```
 
-## 命令参考
+## 命令
 
 | 命令 | 说明 |
-|------|------|
-| `amc status` | 检查 Mac 日志文件是否存在 |
-| `amc url` | 从日志提取唤取 URL |
-| `amc fetch` | 抓取全部卡池记录并保存 |
-| `amc export <UID>` | 导出已保存的数据 |
+|---|---|
+| `amc status` | 检查是否找到游戏日志 |
+| `amc url` | 提取唤取记录 URL，并在 Mac 上复制到剪贴板 |
+| `amc fetch` | 获取、合并并保存全部卡池记录 |
+| `amc export <UID>` | 导出指定账号的 JSON 数据 |
 
-### 常用参数
+常用选项：
 
-- `--log / -l`：指定自定义 `Client.log` 路径
-- `--player / -p`：指定玩家 UID（多账号时）
-- `--url / -u`：直接提供唤取 URL，跳过日志读取
-- `--data-dir`：自定义数据存储目录
-
-## 项目结构
-
-```
-amc/
-├── cli.py           # 命令行入口
-├── log_finder.py    # Mac 日志路径发现
-├── log_parser.py    # 日志解密与 URL 提取
-├── api_client.py    # 官方 API 调用
-├── models.py        # 数据模型
-└── storage.py       # 本地存储与合并
-```
+- `--log / -l`：指定 `Client.log`
+- `--player / -p`：指定玩家 UID
+- `--url / -u`：直接使用唤取 URL
+- `--data-dir`：指定数据目录
 
 ## 开发
 
@@ -126,19 +77,13 @@ pip install -e ".[dev]"
 pytest
 ```
 
-## 路线图
+## 数据与隐私
 
-- [x] Mac 日志自动发现与 URL 提取
-- [x] 全卡池 API 抓取
-- [x] 本地数据存储与增量合并
-- [ ] SwiftUI 原生图形界面
-- [ ] 保底统计与可视化分析
-- [ ] 多账号管理
-- [ ] 菜单栏常驻助手
+aMC 仅读取本地游戏日志，并直接请求游戏官方接口。抽卡记录默认仅保存在本机，项目不包含遥测或第三方数据上传。
 
 ## 免责声明
 
-本工具仅读取本地游戏日志并调用官方公开 API，不会收集或上传任何数据到第三方服务器。请遵守游戏相关服务条款。
+本项目与广州库洛科技有限公司无关。《鸣潮》及相关名称、图像和商标归其权利人所有。使用者应自行遵守游戏服务条款。
 
 ## License
 

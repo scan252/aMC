@@ -48,7 +48,7 @@ async def fetch_pool_records(
 
 async def fetch_all_pools(
     creds: GachaCredentials,
-    on_progress: callable | None = None,
+    on_progress: Callable[..., None] | None = None,
 ) -> dict[str, list[dict[str, Any]]]:
     pools: dict[str, list[dict[str, Any]]] = {}
     total = 0
