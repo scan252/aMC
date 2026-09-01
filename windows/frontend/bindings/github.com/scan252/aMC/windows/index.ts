@@ -4,10 +4,12 @@
 import * as AppService from "./appservice.js";
 import * as GachaService from "./gachaservice.js";
 import * as KurobbsService from "./kurobbsservice.js";
+import * as SettingsService from "./settingsservice.js";
 export {
     AppService,
     GachaService,
-    KurobbsService
+    KurobbsService,
+    SettingsService
 };
 
 export type {
@@ -16,5 +18,6 @@ export type {
     KurobbsOverview,
     KurobbsStatus,
     LogCandidate,
-    RecentItem
+    RecentItem,
+    SettingsWithPaths
 } from "./models.js";

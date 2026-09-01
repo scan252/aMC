@@ -11,20 +11,22 @@ import (
 var assets embed.FS
 
 func main() {
+	kuroSvc := NewKurobbsService()
 	app := application.New(application.Options{
 		Name:        "aMC Suite",
 		Description: "Wuthering Waves Companion for Windows",
 		Services: []application.Service{
 			application.NewService(&AppService{}),
 			application.NewService(&GachaService{}),
-			application.NewService(NewKurobbsService()),
+			application.NewService(kuroSvc),
+			application.NewService(&SettingsService{}),
 		},
 		Assets: application.AssetOptions{
 			Handler: application.AssetFileServerFS(assets),
 		},
 	})
 
-	app.Window.NewWithOptions(application.WebviewWindowOptions{
+	window := app.Window.NewWithOptions(application.WebviewWindowOptions{
 		Title:            "aMC Suite",
 		Width:            1360,
 		Height:           860,
@@ -37,6 +39,12 @@ func main() {
 			Backdrop:                application.MacBackdropTranslucent,
 			TitleBar:                application.MacTitleBarHiddenInset,
 		},
+	})
+
+	kuro := kuroSvc
+	SetupTray(app, window, kuro)
+	StartScheduler(kuro, func(title, body string) {
+		app.Event.Emit("app:notify", map[string]string{"title": title, "body": body})
 	})
 
 	err := app.Run()

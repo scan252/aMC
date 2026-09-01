@@ -75,3 +75,40 @@ export interface RecentItem {
     "pool": string;
     "gap": number;
 }
+
+/**
+ * GetSettings 返回当前设置与数据目录。
+ */
+export interface SettingsWithPaths {
+    /**
+     * 开机自启
+     */
+    "autostart": boolean;
+
+    /**
+     * 每日自动签到
+     */
+    "signInAuto": boolean;
+
+    /**
+     * 自动签到时刻（0-23）
+     */
+    "signInHour": number;
+
+    /**
+     * 波片回满提醒
+     */
+    "waveNotify": boolean;
+
+    /**
+     * 手动指定的客户端日志路径
+     */
+    "logPath": string;
+
+    /**
+     * 界面语言（预留）
+     */
+    "language": string;
+    "dataDir": string;
+    "autostartOn": boolean;
+}
