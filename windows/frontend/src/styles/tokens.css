@@ -1,0 +1,49 @@
+/* aMC Suite · 设计令牌 —— 唯一视觉基准：design/01-liquid-glass.html */
+:root {
+  /* 底色与环境 */
+  --bg: #050507;
+  --orb-gold: rgba(232, 163, 61, 0.34);
+  --orb-violet: rgba(124, 92, 255, 0.26);
+  --orb-teal: rgba(94, 196, 180, 0.12);
+
+  /* 玻璃面板 */
+  --glass-grad: linear-gradient(165deg, rgba(255, 255, 255, 0.075), rgba(255, 255, 255, 0.026));
+  --glass-border: rgba(255, 255, 255, 0.08);
+  --glass-border-hi: rgba(255, 255, 255, 0.13);
+  --glass-inset: inset 0 1px 0 rgba(255, 255, 255, 0.06);
+  --glass-shadow: 0 24px 60px -24px rgba(0, 0, 0, 0.6);
+  --glass-blur: blur(30px) saturate(1.55);
+
+  /* 金色强调 */
+  --gold-1: #f4ce6a;
+  --gold-2: #de9e3b;
+  --gold-3: #c97f1e;
+  --gold-grad: linear-gradient(120deg, #fbe29a, #e8a33d);
+  --gold-grad-btn: linear-gradient(135deg, #f6d67f, #e8a33d);
+  --gold-soft: rgba(237, 190, 90, 0.14);
+  --gold-glow: 0 8px 26px -6px rgba(232, 163, 61, 0.55);
+
+  /* 语义色 */
+  --ok: #7de0a8;
+  --info: #bca8f7;
+  --warn: #f6d68c;
+  --danger: #ff6b6b;
+
+  /* 文本 */
+  --txt-1: rgba(255, 255, 255, 0.92);
+  --txt-2: rgba(255, 255, 255, 0.55);
+  --txt-3: rgba(255, 255, 255, 0.34);
+
+  /* 线条 */
+  --line: rgba(255, 255, 255, 0.08);
+  --line-2: rgba(255, 255, 255, 0.05);
+
+  /* 形状 */
+  --radius: 22px;
+  --radius-sm: 13px;
+  --radius-xs: 9px;
+
+  /* 字体 */
+  --font-ui: 'Segoe UI Variable Display', 'Segoe UI', 'Microsoft YaHei UI', 'Microsoft YaHei', system-ui, sans-serif;
+  --font-mono: 'Cascadia Code', 'JetBrains Mono', Consolas, monospace;
+}
