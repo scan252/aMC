@@ -16,6 +16,7 @@ func main() {
 		Description: "Wuthering Waves Companion for Windows",
 		Services: []application.Service{
 			application.NewService(&AppService{}),
+			application.NewService(&GachaService{}),
 		},
 		Assets: application.AssetOptions{
 			Handler: application.AssetFileServerFS(assets),
