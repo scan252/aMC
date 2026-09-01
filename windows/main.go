@@ -17,6 +17,7 @@ func main() {
 		Services: []application.Service{
 			application.NewService(&AppService{}),
 			application.NewService(&GachaService{}),
+			application.NewService(NewKurobbsService()),
 		},
 		Assets: application.AssetOptions{
 			Handler: application.AssetFileServerFS(assets),

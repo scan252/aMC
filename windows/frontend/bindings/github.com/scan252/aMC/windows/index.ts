@@ -3,14 +3,18 @@
 
 import * as AppService from "./appservice.js";
 import * as GachaService from "./gachaservice.js";
+import * as KurobbsService from "./kurobbsservice.js";
 export {
     AppService,
-    GachaService
+    GachaService,
+    KurobbsService
 };
 
 export type {
     AccountDetail,
     AccountSummary,
+    KurobbsOverview,
+    KurobbsStatus,
     LogCandidate,
     RecentItem
 } from "./models.js";

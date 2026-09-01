@@ -6,6 +6,9 @@
 import * as gacha$0 from "./internal/gacha/models.js";
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore: Unused imports
+import * as kurobbs$0 from "./internal/kurobbs/models.js";
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore: Unused imports
 import * as wulog$0 from "./internal/wulog/models.js";
 
 /**
@@ -30,6 +33,27 @@ export interface AccountSummary {
     "total": number;
     "count5": number;
     "avgPity": number;
+}
+
+/**
+ * KurobbsOverview 账号中心页聚合数据。
+ */
+export interface KurobbsOverview {
+    "status": KurobbsStatus;
+    "roles": kurobbs$0.Role[] | null;
+    "signIn": kurobbs$0.SignInInfo | null;
+    "widget": kurobbs$0.WidgetData | null;
+}
+
+/**
+ * KurobbsStatus 登录状态概览。
+ */
+export interface KurobbsStatus {
+    "bound": boolean;
+    "name": string;
+    "phone": string;
+    "mode": string;
+    "userId": string;
 }
 
 /**
