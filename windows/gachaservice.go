@@ -180,6 +180,28 @@ func (s *GachaService) ExportAccount(uid, destDir string) (string, error) {
 	return dest, nil
 }
 
+// ImportAccount 从 JSON 文件导入账号数据（兼容 Mac 版 aMC 导出格式），返回 UID。
+func (s *GachaService) ImportAccount(path string) (string, error) {
+	data, err := gacha.LoadGachaData(path)
+	if err != nil {
+		return "", err
+	}
+	if data == nil || data.PlayerID == "" {
+		return "", fmt.Errorf("导入文件缺少 player_id，且不是有效的 aMC 数据文件")
+	}
+	if data.Pools == nil {
+		data.Pools = map[string][]gacha.Record{}
+	}
+	dir, err := gacha.DefaultDataDir()
+	if err != nil {
+		return "", err
+	}
+	if err := gacha.SaveGachaData(gacha.PlayerDataPath(dir, data.PlayerID), data); err != nil {
+		return "", err
+	}
+	return data.PlayerID, nil
+}
+
 func buildDetail(data *gacha.GachaData) *AccountDetail {
 	d := &AccountDetail{
 		UID:       data.PlayerID,

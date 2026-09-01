@@ -29,6 +29,13 @@ export function ExportAccount(uid: string, destDir: string): $CancellablePromise
 }
 
 /**
+ * ImportAccount 从 JSON 文件导入账号数据（兼容 Mac 版 aMC 导出格式），返回 UID。
+ */
+export function ImportAccount(path: string): $CancellablePromise<string> {
+    return $Call.ByID(753284001, path);
+}
+
+/**
  * ListAccounts 列出本地全部账号摘要。
  */
 export function ListAccounts(): $CancellablePromise<$models.AccountSummary[] | null> {
