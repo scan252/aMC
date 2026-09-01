@@ -67,10 +67,9 @@ func ReadLog(path string) (string, error) {
 	if IsEncrypted(raw) {
 		raw = Decrypt(raw)
 	}
-	text := strings.TrimPrefix(string(raw), "﻿")
+	text := strings.TrimPrefix(string(raw), "\ufeff")
 	return text, nil
 }
-
 // ExtractGachaURLs 从日志文本中按出现顺序提取全部唤取记录 URL。
 func ExtractGachaURLs(content string) []string {
 	return GachaURLRe.FindAllString(content, -1)
