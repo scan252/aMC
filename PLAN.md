@@ -1,0 +1,156 @@
+# aMC Suite for Windows · 正式计划书
+
+> 版本：v1.0（2026-09-02 定稿）
+> 分支：`feat/win`（全部工作在此分支进行，main 保持不动）
+> 视觉基准：[design/01-liquid-glass.html](design/01-liquid-glass.html)「曜黑 · 液态玻璃」（详见 [design/README.md](design/README.md)）
+
+---
+
+## 1. 产品定位
+
+**aMC Suite**：面向《鸣潮》玩家的 Windows 桌面综合工具站——对标「鸣潮助手 / WutheringWavesTool」的产品形态，而非单纯的抽卡记录脚本。
+
+- **口号**：抽卡分析 · 账号管家 · 养成工具 · 资讯日历，一站常驻
+- **形态**：Wails v3 桌面应用（WebView2 渲染），单 exe ≈ 10–15 MB，深色玻璃视觉
+- **底线**：只读官方接口与本地日志，不做任何游戏内修改/内存读取/自动化操作（合规红线见 §8）
+
+## 2. 技术决策（已定，不再反复）
+
+| 决策项 | 结论 | 备注 |
+|--------|------|------|
+| GUI 框架 | **Wails v3（beta）** | 需要系统托盘/多窗口；桌面 API 已稳定，风险见 §9 |
+| 后端语言 | **Go 1.27**（本机 `D:\Zcode\tools\go`） | 单二进制、交叉编译友好 |
+| 前端 | **Vue 3 + TypeScript + Vite + Pinia + vue-router** | 用户熟悉 Vue3（drop-relay 同栈） |
+| UI 组件 | **自建设计系统**（方向 01 设计令牌）+ Naive UI 按需补充 | 质感优先，拒绝"AI demo 感" |
+| 图表 | ECharts（按需引入） | 抽卡分布/趋势 |
+| 第三方 Go 依赖 | 最小化：`golang.org/x/sys`（注册表）等 | 核心逻辑纯标准库 |
+| 数据目录 | `%USERPROFILE%\.amc\data\{UID}\gacha_data.json` | **与 Mac 版 aMC 格式互通** |
+| 国际化 | i18n 骨架预留，界面默认简体中文 | |
+| 产品名 | 暂用 **aMC Suite**，UI 标题 `aMC Suite` | 后续可改 |
+
+## 3. 代码结构（windows/ 子目录，独立 go.mod）
+
+```
+windows/
+├── go.mod                    # module github.com/scan252/aMC/windows
+├── main.go                   # Wails v3 应用入口、窗口/托盘配置
+├── app.go                    # 绑定给前端的应用级 API（服务注册总线）
+├── internal/
+│   ├── wulog/                # 【Windows 专属】日志发现 + 解密 + URL 提取
+│   │   ├── discover.go       #   四级发现：KR启动器配置→注册表→常见路径扫描→手动
+│   │   └── decrypt.go        #   魔数探测 + XOR 解密（移植自 amc/log_parser.py）
+│   ├── gacha/                # 【平台无关】抽卡域
+│   │   ├── credentials.go    #   URL→凭证解析（移植 models.py）
+│   │   ├── client.go         #   官方接口：13 卡池拉取（移植 api_client.py）
+│   │   ├── merge.go          #   增量合并，保留过期历史（移植 storage.py）
+│   │   ├── stats.go          #   统计：总抽数/平均出金/欧非指数/保底进度/歪率
+│   │   └── store.go          #   ~/.amc 存储 + 备份
+│   ├── kurobbs/              # 【账号域底座】库街区客户端
+│   │   ├── client.go         #   SDK 登录/签到V2/小组件/roleBox 接口封装
+│   │   ├── token.go          #   凭证存储（DPAPI/本地加密）
+│   │   └── mock.go           #   模拟数据源（UI 开发与演示）
+│   ├── gamedata/             # 游戏数据库服务（角色/武器/声骸/材料 JSON）
+│   ├── settings/             # 设置中心（主题/自启/通知/数据目录）
+│   └── appdata/              # 版本信息、自更新检查
+├── frontend/                 # Vue3 应用
+│   ├── src/
+│   │   ├── main.ts / App.vue
+│   │   ├── router/           # 9 个页面路由
+│   │   ├── stores/           # pinia：gacha/account/settings/news
+│   │   ├── styles/           # 设计令牌 tokens.css + 组件样式
+│   │   ├── components/       # Sidebar/StatCard/GlassPanel/PityBar/DataTable...
+│   │   └── pages/
+│   │       ├── Dashboard.vue       # 总览仪表盘
+│   │       ├── GachaAnalysis.vue   # 唤取分析（核心，方向01 demo 落地）
+│   │       ├── Account.vue         # 账号中心（库街区绑定/签到/体力）
+│   │       ├── Codex.vue           # 角色图鉴
+│   │       ├── EchoTool.vue        # 声骸工具
+│   │       ├── Planner.vue         # 养成计算
+│   │       ├── News.vue            # 资讯日历
+│   │       ├── Codes.vue           # 兑换码
+│   │       └── Settings.vue        # 设置
+│   └── wailsjs/              # Wails 自动生成绑定
+└── build/                    # 图标、打包配置
+.github/workflows/build.yml   # Windows 构建流水线
+```
+
+## 4. 模块清单（评审已通过，全做）
+
+### 框架层（v0.1 主体）
+F1 应用外壳（侧边栏+路由骨架+托盘） / F2 设计系统（方向01 令牌化） / F3 前端技术栈 / F4 Go 域服务总线 / F5 本地存储服务 / F6 游戏数据库服务 / F7 设置中心 / F8 通知服务 / F9 系统托盘 / F10 自更新 / F11 i18n 骨架 / F12 CI/CD / F13 日志诊断
+
+### 功能域
+| 域 | 模块 | 期 |
+|----|------|----|
+| A 抽卡 | A1 抓取引擎（日志→URL→API→合并） | v0.1 |
+| A 抽卡 | A2 分析看板（总抽数/欧非/保底/歪率/分布图） | v0.1 |
+| A 抽卡 | A3 多账号管理 | v0.1 |
+| A 抽卡 | A5 导入导出（JSON/CSV，Mac 版互通） | v0.2 |
+| A 抽卡 | A4 卡池历史日历 | v0.3 |
+| B 账号 | B1 库街区绑定底座（短信登录客户端+凭证存储+mock UI） | v0.2 |
+| B 账号 | B2 每日自动签到 | v0.2 |
+| B 账号 | B3 结晶波片监控+提醒 | v0.2 |
+| B 账号 | B4 练度总览 / B5 探索度·声骸收集·资源统计 | v0.3 |
+| B 账号 | B6 深塔/冥歌海墟成绩（接口待验证） | v0.4 |
+| C 养成 | C1 图鉴（角色/武器/声骸） | v0.3 |
+| C 养成 | C2 养成材料计算器 | v0.3 |
+| C 养成 | C3 声骸评分器 | v0.3 |
+| C 养成 | C4 配队参考 / C5 伤害计算器 | v0.4 / 远期 |
+| D 资讯 | D1 官方公告聚合 / D2 版本日历 / D3 兑换码聚合 | v0.3 |
+| E 桌面 | E1 托盘快览 / E3 开机自启 | v0.2 |
+| E 桌面 | E2 全局快捷键 / E4 游戏快速启动 | v0.4 |
+| F 同步 | F1 备份恢复 / F2 WebDAV 云同步 | v0.3 / v0.4 |
+
+## 5. 实施顺序（自主连续工作，每步测试通过即 commit+push）
+
+1. ✅ 视觉 demo 定稿（已完成，commit 618df01）
+2. 本计划书入库
+3. **Wails v3 + Vue3 骨架**：`wails3 init` → windows/ 目录重组 → 设计令牌 + 外壳/路由 → `wails3 build` 产出 exe 验证
+4. **Go 抽卡域移植**：decrypt/credentials/client/merge/store + 单元测试（合成加密日志、URL 解析、合并逻辑）
+5. **Windows 日志发现**：四级发现策略（注册表/盘扫可单测 mock；真实游戏环境标记 ⏸）
+6. **唤取分析页面**：真实数据驱动 + ECharts 分布图 + 抓取进度事件流
+7. **多账号 + 导入导出**（v0.1 收口）
+8. **库街区底座**：client 全接口封装 + 凭证存储 + mock 驱动账号中心 UI（真实短信登录 ⏸ 待真人测试）
+9. **签到调度 + 体力提醒 + 托盘 + 自启**（v0.2 收口）
+10. **图鉴/材料计算/声骸评分/资讯/兑换码**（v0.3）
+11. **自更新/快捷键/WebDAV/游戏启动**（v0.4）
+12. **CI 流水线**：GitHub Actions windows-latest 构建 + Release
+13. 自主增值工作（补测试/文档/打磨）直至叫停
+
+## 6. 工作纪律（长期自主运行）
+
+- **commit 规范**：conventional commits + 中文描述；一个模块一个 commit；每 commit 即 push
+- **测试策略**：
+  - 可自测：Go 单测、`wails3 build`、前端本地运行 + 浏览器截图 QA、官方抽卡接口（无需鉴权）
+  - ⏸ 待真人测试（标记后推进，不阻塞）：库街区短信登录、真实游戏日志抓取、开机自启/托盘实机行为
+- **不闲置**：计划内工作完成后自主安排：测试覆盖补强、文档完善、性能与视觉打磨、锦上添花小功能
+- **禁止**：花钱、对外发布、删除现有数据、动 main 分支
+
+## 7. 数据与隐私
+
+- 抽卡数据与 Mac 版完全同构：`{player_id, svr_area, fetched_at, pools:{1..13:[...]}}`
+- 抓取流程对用户透明：仅读本地日志 + 请求官方接口，无遥测无第三方上传
+- 库街区凭证仅存本机（DPAPI 加密），不落明文
+
+## 8. 合规红线（不做）
+
+帧率解锁 / 内存读取 / 自动战斗与代肝 / 任何修改游戏行为的能力。仅做：读日志、调官方接口、本地统计展示、拉起官方游戏进程。
+
+## 9. 风险与应对
+
+| 风险 | 影响 | 应对 |
+|------|------|------|
+| Wails v3 为 beta | API 变动/构建问题 | 锁定版本；核心业务在 internal 纯 Go 包中与 GUI 解耦，必要时可迁 v2/换壳 |
+| 库街区接口变动（有先例） | 账号域失效 | 接口层集中封装 + mock 数据源，UI 不依赖真实接口可独立开发 |
+| 日志加密方案变更 | 抓取失效 | 解密逻辑独立包 + Mac 版同步维护；保留 --log 手动路径兜底 |
+| 杀软误报（单 exe） | 分发受阻 | CI 附 sha256；必要时后续加代码签名（需付费，标记待用户决策） |
+| 用户离线无法实测 | 部分功能未验证 | 全部标记 ⏸ 清单在 PLAN.md §6，交付时集中列出 |
+
+## 10. 验收清单（用户回来后）
+
+- [ ] `wails3 build` 产出 exe 可启动，视觉与 design/01 一致
+- [ ] 抽卡抓取全流程（⏸ 需启动游戏）／导入导出／多账号
+- [ ] 单元测试全绿：`go test ./...`
+- [ ] 库街区底座接口封装 + mock UI 完整（⏸ 真实登录）
+- [ ] CI 构建产物可下载运行
+- [ ] 全部 ⏸ 项集中清单
