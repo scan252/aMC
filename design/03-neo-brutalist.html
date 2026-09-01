@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>aMC · 方向03 新粗野印刷</title>
+<style>
+  :root{
+    --paper:#F4F0E6; --ink:#161613; --ink-soft:#5A584F;
+    --lime:#C8F04B; --orange:#FF5C1F; --yellow:#F8E94E; --violet:#B9A7F9;
+    --line:#161613;
+    --mono:"Cascadia Code",Consolas,monospace;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html,body{height:100%}
+  body{
+    font-family:"Segoe UI Variable Display","Segoe UI","Microsoft YaHei UI","Microsoft YaHei",system-ui,sans-serif;
+    background:var(--paper);color:var(--ink);overflow:hidden;-webkit-font-smoothing:antialiased;
+  }
+  /* subtle paper grain */
+  body::after{content:"";position:fixed;inset:0;z-index:99;pointer-events:none;opacity:.5;mix-blend-mode:multiply;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='2'/%3E%3CfeColorMatrix values='0 0 0 0 0.93 0 0 0 0 0.92 0 0 0 0 0.9 0 0 0 0.05 0'/%3E%3C/filter%3E%3Crect width='120' height='120' filter='url(%23n)'/%3E%3C/svg%3E");}
+  .bcard{background:#FFFDF6;border:2px solid var(--line);box-shadow:5px 5px 0 var(--line);border-radius:12px}
+  .shell{position:relative;z-index:2;display:grid;grid-template-columns:230px 1fr;gap:18px;height:100vh;padding:18px}
+  /* ── sidebar ── */
+  .sidebar{display:flex;flex-direction:column;padding:18px 14px 14px}
+  .logo{display:flex;align-items:center;gap:10px;padding:2px 4px 16px}
+  .mark{width:38px;height:38px;flex-shrink:none;display:grid;place-items:center;background:var(--ink);color:var(--lime);
+    border-radius:10px;border:2px solid var(--line);box-shadow:3px 3px 0 var(--line);font-weight:800;font-size:14px}
+  .logo-t b{display:block;font-size:19px;font-weight:800;letter-spacing:-.4px}
+  .logo-t span{font-size:9px;letter-spacing:.32em;color:var(--ink-soft);font-weight:700}
+  nav{display:flex;flex-direction:column;gap:6px;flex:1}
+  .nav-cap{font-size:10px;letter-spacing:.28em;color:var(--ink-soft);padding:10px 4px 4px;font-weight:800}
+  nav a{display:flex;align-items:center;gap:10px;height:40px;padding:0 11px;border-radius:10px;border:2px solid transparent;
+    color:var(--ink);font-size:13.5px;font-weight:600;text-decoration:none;transition:all .15s}
+  nav a svg{width:17px;height:17px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+  nav a:hover{border-color:var(--line);transform:translate(-1px,-1px);box-shadow:2px 2px 0 var(--line);background:#FFFDF6}
+  nav a.active{background:var(--ink);color:var(--lime);border-color:var(--line);box-shadow:3px 3px 0 rgba(22,22,19,.25)}
+  nav a.active svg{stroke:var(--lime)}
+  .side-foot{border-top:2px solid var(--line);padding-top:12px}
+  .ver{font-size:10.5px;color:var(--ink-soft);padding:6px 4px;font-family:var(--mono);font-weight:600}
+  /* ── main ── */
+  main{display:flex;flex-direction:column;gap:14px;min-width:0;overflow:hidden}
+  .top{display:flex;align-items:center;justify-content:space-between;padding:16px 20px}
+  h1{font-size:26px;font-weight:800;letter-spacing:-.5px;display:flex;align-items:center;gap:12px}
+  h1 .spark{background:var(--yellow);border:2px solid var(--line);border-radius:8px;padding:1px 8px;font-size:13px;font-weight:800;
+    transform:rotate(-2deg);box-shadow:2px 2px 0 var(--line)}
+  .sub{font-size:12.5px;color:var(--ink-soft);margin-top:5px;font-weight:600}
+  .top-r{display:flex;gap:12px;align-items:center}
+  .account{display:flex;align-items:center;gap:8px;height:40px;padding:0 15px;font-size:13px;font-weight:700;cursor:pointer;background:var(--lime)}
+  .account small{font-weight:600;color:var(--ink-soft)}
+  .btn{height:40px;padding:0 20px;border:2px solid var(--line);cursor:pointer;font-size:13.5px;font-weight:800;
+    color:#FFFDF6;background:var(--orange);border-radius:12px;box-shadow:4px 4px 0 var(--line);transition:all .13s;font-family:inherit;letter-spacing:.02em}
+  .btn:hover{transform:translate(-2px,-2px);box-shadow:6px 6px 0 var(--line)}
+  .btn:active{transform:translate(2px,2px);box-shadow:1px 1px 0 var(--line)}
+  /* tabs */
+  .tabs{display:flex;gap:8px;padding:10px;width:fit-content}
+  .tab{height:34px;padding:0 15px;display:flex;align-items:center;gap:7px;font-size:13px;font-weight:700;color:var(--ink-soft);
+    cursor:pointer;border-radius:9px;border:2px solid transparent;transition:all .13s}
+  .tab:hover{color:var(--ink)}
+  .tab.active{color:var(--ink);background:var(--yellow);border-color:var(--line);box-shadow:3px 3px 0 var(--line)}
+  .tab .n{font-family:var(--mono);font-size:10.5px;font-weight:700}
+  /* stats */
+  .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+  .stat{padding:16px 18px;position:relative}
+  .stat .k{font-size:11px;color:var(--ink-soft);letter-spacing:.16em;font-weight:800;display:flex;justify-content:space-between;align-items:center}
+  .stat .k i{font-style:normal;font-family:var(--mono);font-size:9px;background:var(--paper);border:1.5px solid var(--line);
+    border-radius:5px;padding:1px 5px}
+  .stat .v{font-size:42px;font-weight:800;margin-top:8px;letter-spacing:-2px;font-variant-numeric:tabular-nums;line-height:1}
+  .stat .v em{font-style:normal;font-size:15px;font-weight:700;color:var(--ink-soft);letter-spacing:0;margin-left:3px}
+  .stat.hero{background:var(--lime)}
+  .stat .foot{margin-top:8px;font-size:12px;font-weight:600;color:var(--ink-soft)}
+  .stat .foot b{color:var(--orange)}
+  /* mid */
+  .mid{display:grid;grid-template-columns:1.25fr 1.15fr 1fr;gap:14px}
+  .card{padding:18px 20px;display:flex;flex-direction:column}
+  .card h3{font-size:12px;font-weight:800;color:var(--ink-soft);display:flex;align-items:center;justify-content:space-between;letter-spacing:.18em}
+  .card h3 .tag{font-family:var(--mono);font-size:9px;background:var(--paper);border:1.5px solid var(--line);padding:2px 6px;border-radius:6px}
+  .pity{display:flex;align-items:baseline;gap:4px;margin:15px 0 13px}
+  .pity b{font-size:48px;font-weight:800;letter-spacing:-2.5px;line-height:1}
+  .pity span{font-size:16px;font-weight:700;color:var(--ink-soft)}
+  .pity .left{margin-left:auto;font-size:12.5px;font-weight:700;color:var(--ink-soft)}
+  .pity .left b{color:#FFFDF6;background:var(--orange);border:2px solid var(--line);border-radius:7px;padding:1px 8px;font-size:14px;box-shadow:2px 2px 0 var(--line)}
+  .track{height:16px;border:2px solid var(--line);border-radius:9px;background:#FFFDF6;overflow:hidden;position:relative}
+  .fill{height:100%;width:0;border-radius:6px;background:repeating-linear-gradient(-45deg,var(--lime) 0 9px,var(--ink) 9px 11px,var(--lime) 11px 20px);
+    transition:width 1.1s cubic-bezier(.2,.7,.2,1)}
+  .pity-fn{display:flex;justify-content:space-between;font-size:10.5px;color:var(--ink-soft);margin-top:9px;font-weight:700;font-family:var(--mono)}
+  /* banner */
+  .bnr-name{font-size:23px;font-weight:800;margin-top:13px;letter-spacing:-.5px;display:flex;align-items:center;gap:10px}
+  .bnr-name .st{background:var(--violet);border:2px solid var(--line);border-radius:8px;padding:2px 9px;font-size:13px;font-weight:800;
+    transform:rotate(-2.5deg);box-shadow:2px 2px 0 var(--line)}
+  .bnr-meta{font-size:12px;color:var(--ink-soft);margin-top:7px;font-weight:600;font-family:var(--mono)}
+  .bnr-foot{margin-top:auto;display:flex;gap:9px;padding-top:16px;flex-wrap:wrap}
+  .chip{height:28px;padding:0 12px;border-radius:999px;font-size:11.5px;font-weight:800;display:flex;align-items:center;
+    border:2px solid var(--line);background:#FFFDF6;box-shadow:2px 2px 0 var(--line)}
+  .chip.hot{background:var(--yellow)}
+  /* donut */
+  .donut-wrap{display:flex;align-items:center;gap:18px;flex:1}
+  .donut{width:116px;height:116px;border-radius:50%;flex-shrink:none;border:2px solid var(--line);
+    background:conic-gradient(var(--orange) 0 71%,#D8D4C4 71% 100%);
+    -webkit-mask:radial-gradient(circle,transparent 52%,#000 53.5%);mask:radial-gradient(circle,transparent 52%,#000 53.5%)}
+  .legend{display:flex;flex-direction:column;gap:11px;font-size:12.5px;font-weight:700}
+  .legend i{width:10px;height:10px;border:2px solid var(--line);border-radius:3px;display:inline-block;margin-right:8px}
+  .legend b{font-size:17px;font-weight:800;margin-left:6px;font-variant-numeric:tabular-nums}
+  .legend .l1 i{background:var(--orange)}.legend .l2 i{background:#D8D4C4}
+  .legend small{color:var(--ink-soft);margin-left:5px;font-size:10.5px;font-family:var(--mono)}
+  /* bottom */
+  .bottom{display:grid;grid-template-columns:1.55fr 1fr;gap:14px;flex:1;min-height:0}
+  table{width:100%;border-collapse:collapse;margin-top:8px}
+  th{font-size:10px;color:var(--ink-soft);font-weight:800;text-align:left;padding:8px 8px;letter-spacing:.16em;
+    border-bottom:2px solid var(--line)}
+  td{padding:10.5px 8px;font-size:13.5px;border-bottom:1.5px solid #E4E0D2;font-variant-numeric:tabular-nums}
+  tr:last-child td{border-bottom:none}
+  td .who{font-weight:800}
+  td .pool{color:var(--ink-soft);font-size:12px;font-weight:600}
+  .pill{display:inline-flex;align-items:center;height:25px;padding:0 11px;border-radius:8px;font-size:11px;font-weight:800;
+    border:2px solid var(--line);box-shadow:2px 2px 0 var(--line)}
+  .p-gold{background:var(--lime)}
+  .p-off{background:var(--yellow)}
+  .p-lost{background:var(--violet)}
+  /* bars */
+  .bars{display:flex;align-items:flex-end;gap:8px;height:140px;margin-top:auto;padding-top:12px}
+  .bar{flex:1;display:flex;flex-direction:column;align-items:center;gap:6px;height:100%;justify-content:flex-end}
+  .bar i{width:100%;max-width:28px;border:2px solid var(--line);border-radius:6px 6px 0 0;background:#FFFDF6;min-height:3px;
+    transition:height 1s cubic-bezier(.2,.7,.2,1);height:0}
+  .bar.hot i{background:var(--orange)}
+  .bar span{font-size:9.5px;color:var(--ink-soft);font-family:var(--mono);font-weight:700;white-space:nowrap}
+  .bar em{font-style:normal;font-size:11px;font-weight:800}
+  .corner{position:fixed;right:20px;bottom:18px;z-index:100;height:32px;padding:0 14px;display:flex;align-items:center;gap:8px;
+    font-size:11px;letter-spacing:.08em;font-weight:800;background:var(--ink);color:var(--paper);border-radius:10px;box-shadow:3px 3px 0 rgba(22,22,19,.3)}
+  .corner b{color:var(--lime)}
+  @keyframes rise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+  .a{animation:rise .55s cubic-bezier(.2,.7,.2,1) both}
+  .d1{animation-delay:.05s}.d2{animation-delay:.11s}.d3{animation-delay:.17s}.d4{animation-delay:.23s}.d5{animation-delay:.3s}.d6{animation-delay:.38s}
+</style>
+</head>
+<body>
+<div class="corner"><b>03</b> 新粗野 · NEO-BRUTAL PRINT</div>
+<div class="shell">
+  <aside class="sidebar bcard a d1">
+    <div class="logo">
+      <div class="mark">aMC</div>
+      <div class="logo-t"><b>aMC SUITE</b><span>WUTHERING WAVES</span></div>
+    </div>
+    <nav>
+      <div class="nav-cap">工作台</div>
+      <a href="#"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7.5" height="7.5" rx="2"/><rect x="13.5" y="3" width="7.5" height="7.5" rx="2"/><rect x="3" y="13.5" width="7.5" height="7.5" rx="2"/><rect x="13.5" y="13.5" width="7.5" height="7.5" rx="2"/></svg>总览</a>
+      <a href="#" class="active"><svg viewBox="0 0 24 24"><path d="M4 20V10M10 20V4M16 20v-7M21 20H3"/></svg>唤取分析</a>
+      <a href="#"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"/></svg>账号中心</a>
+      <div class="nav-cap">图鉴与工具</div>
+      <a href="#"><svg viewBox="0 0 24 24"><path d="M4 19V5a2 2 0 0 1 2-2h13v16H6a2 2 0 0 0-2 2z"/><path d="M4 19a2 2 0 0 0 2 2h13"/></svg>角色图鉴</a>
+      <a href="#"><svg viewBox="0 0 24 24"><path d="M12 3l8 4.5v9L12 21l-8-4.5v-9z"/><path d="M12 12l8-4.5M12 12v9M12 12L4 7.5"/></svg>声骸工具</a>
+      <a href="#"><svg viewBox="0 0 24 24"><rect x="4" y="3" width="16" height="18" rx="2.5"/><path d="M8 7h8M8 11h3M13 11h3M8 15h3M13 15h3"/></svg>养成计算</a>
+      <div class="nav-cap">资讯</div>
+      <a href="#"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2.5"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>资讯日历</a>
+      <a href="#"><svg viewBox="0 0 24 24"><rect x="4" y="9" width="16" height="12" rx="2"/><path d="M12 9v12M4 9h16l-1.5-4h-13zM9 5.5C9 4 10 3 11 3s1.5 1 1 2.5L11 9M15 5.5c0-1.5-1-2.5-2-2.5s-1.5 1-1 2.5L13 9"/></svg>兑换码</a>
+    </nav>
+    <div class="side-foot">
+      <div class="ver">aMC SUITE v0.1.0 · WINDOWS</div>
+    </div>
+  </aside>
+  <main>
+    <header class="top bcard a d2">
+      <div>
+        <h1>唤取分析<span class="spark">GACHA</span></h1>
+        <div class="sub">更新于今天 14:32 · 来自官方唤取接口</div>
+      </div>
+      <div class="top-r">
+        <div class="account bcard">UID 100252731 <small>国服 ▾</small></div>
+        <button class="btn">立即抓取</button>
+      </div>
+    </header>
+    <div class="tabs bcard a d2">
+      <div class="tab active">角色活动唤取<span class="n">726</span></div>
+      <div class="tab">武器活动唤取<span class="n">318</span></div>
+      <div class="tab">角色常驻唤取<span class="n">142</span></div>
+      <div class="tab">武器常驻唤取<span class="n">41</span></div>
+      <div class="tab">新手唤取<span class="n">20</span></div>
+    </div>
+    <section class="stats">
+      <div class="stat bcard hero a d3"><div class="k">累计唤取<i>TOTAL</i></div><div class="v"><span class="num" data-count="1247">0</span></div><div class="foot">本卡池 <b>726</b> 抽</div></div>
+      <div class="stat bcard a d3"><div class="k">5★ 已获取<i>FIVE</i></div><div class="v"><span class="num" data-count="14">0</span><em>★</em></div><div class="foot">4★ 共 213 个</div></div>
+      <div class="stat bcard a d4"><div class="k">平均出金<i>AVG</i></div><div class="v"><span class="num" data-count="89.1" data-dec="1">0</span><em>抽</em></div><div class="foot">综合期望 62.0 抽</div></div>
+      <div class="stat bcard a d4"><div class="k">欧非指数<i>LUCK</i></div><div class="v">0.93</div><div class="foot">较均值<b>偏非 7%</b></div></div>
+    </section>
+    <section class="mid">
+      <div class="card bcard a d4">
+        <h3>保底进度<span class="tag">PITY</span></h3>
+        <div class="pity"><b>73</b><span>/ 80</span><span class="left">距保底 <b>7</b> 抽</span></div>
+        <div class="track"><div class="fill" data-w="91%"></div></div>
+        <div class="pity-fn"><span>软保底 65+</span><span>硬保底 80</span></div>
+      </div>
+      <div class="card bcard a d5">
+        <h3>当前卡池<span class="tag">BANNER</span></h3>
+        <div class="bnr-name">潮汐回响<span class="st">今汐</span></div>
+        <div class="bnr-meta">2026.08.13 — 2026.09.10 · 角色活动唤取</div>
+        <div class="bnr-foot"><span class="chip hot">剩余 12 天</span><span class="chip">已垫 73 抽</span><span class="chip">5★ ×2</span></div>
+      </div>
+      <div class="card bcard a d5">
+        <h3>5★ 构成<span class="tag">RATIO</span></h3>
+        <div class="donut-wrap" style="margin-top:12px">
+          <div class="donut"></div>
+          <div class="legend">
+            <div class="l1"><i></i>限定<b>10</b><small>71%</small></div>
+            <div class="l2"><i></i>歪入常驻<b>4</b><small>29%</small></div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <section class="bottom">
+      <div class="card bcard a d5">
+        <h3>最近 5★ 记录<span class="tag">RECENT</span></h3>
+        <table>
+          <tr><th style="width:80px">日期</th><th>名称</th><th style="width:140px">卡池</th><th style="width:84px">唤取</th><th style="width:80px">结果</th></tr>
+          <tr><td style="font-family:var(--mono);font-weight:700">08-21</td><td><span class="who">卡提希娅</span></td><td class="pool">角色活动唤取</td><td style="font-weight:700">80</td><td><span class="pill p-gold">不歪</span></td></tr>
+          <tr><td style="font-family:var(--mono);font-weight:700">07-30</td><td><span class="who">赞妮</span></td><td class="pool">角色活动唤取</td><td style="font-weight:700">11</td><td><span class="pill p-off">欧皇</span></td></tr>
+          <tr><td style="font-family:var(--mono);font-weight:700">07-12</td><td><span class="who">鉴心</span></td><td class="pool">角色常驻唤取</td><td style="font-weight:700">74</td><td><span class="pill p-lost">歪</span></td></tr>
+          <tr><td style="font-family:var(--mono);font-weight:700">06-28</td><td><span class="who">珂莱塔</span></td><td class="pool">角色活动唤取</td><td style="font-weight:700">88</td><td><span class="pill p-gold">不歪</span></td></tr>
+          <tr><td style="font-family:var(--mono);font-weight:700">06-10</td><td><span class="who">椿</span></td><td class="pool">角色活动唤取</td><td style="font-weight:700">78</td><td><span class="pill p-gold">不歪</span></td></tr>
+        </table>
+      </div>
+      <div class="card bcard a d6">
+        <h3>出金分布<span class="tag">DIST</span></h3>
+        <div class="bars">
+          <div class="bar"><em>1</em><i data-h="12%"></i><span>≤10</span></div>
+          <div class="bar"><em>0</em><i data-h="3%"></i><span>11-20</span></div>
+          <div class="bar"><em>2</em><i data-h="24%"></i><span>21-30</span></div>
+          <div class="bar"><em>1</em><i data-h="12%"></i><span>31-40</span></div>
+          <div class="bar"><em>2</em><i data-h="24%"></i><span>41-50</span></div>
+          <div class="bar"><em>1</em><i data-h="12%"></i><span>51-60</span></div>
+          <div class="bar"><em>2</em><i data-h="24%"></i><span>61-70</span></div>
+          <div class="bar"><em>2</em><i data-h="24%"></i><span>71-75</span></div>
+          <div class="bar hot"><em>3</em><i data-h="36%"></i><span>76-80</span></div>
+        </div>
+      </div>
+    </section>
+  </main>
+</div>
+<script>
+  document.querySelectorAll('.num').forEach(el=>{
+    const t=parseFloat(el.dataset.count),dec=+(el.dataset.dec||0),t0=performance.now();
+    (function f(n){const p=Math.min((n-t0)/1100,1),e=1-Math.pow(1-p,3);
+      el.textContent=(t*e).toFixed(dec).replace(/\B(?=(\d{3})+(?!\d))/g,',');
+      if(p<1)requestAnimationFrame(f)})(t0);
+  });
+  requestAnimationFrame(()=>document.querySelectorAll('.fill').forEach(e=>e.style.width=e.dataset.w));
+  setTimeout(()=>document.querySelectorAll('.bar i').forEach(e=>e.style.height=e.dataset.h),350);
+</script>
+</body>
+</html>

@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>aMC · 方向04 瑞士精密</title>
+<style>
+  :root{
+    --paper:#FAFAF7; --ink:#141417; --ink-2:#52525A; --ink-3:#9A9AA0;
+    --hair:#E4E4DE; --hair-2:#EDEDE8;
+    --acc:#FF4400;
+    --mono:"Cascadia Code","SF Mono",Consolas,monospace;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html,body{height:100%}
+  body{
+    font-family:"Segoe UI Variable Display","Segoe UI","Microsoft YaHei UI","Microsoft YaHei",system-ui,sans-serif;
+    background:var(--paper);color:var(--ink);overflow:hidden;-webkit-font-smoothing:antialiased;
+  }
+  .shell{display:grid;grid-template-columns:218px 1fr;height:100vh}
+  /* ── sidebar ── */
+  .sidebar{border-right:1px solid var(--hair);display:flex;flex-direction:column;padding:26px 14px 20px;background:#F5F5F1}
+  .logo{display:flex;align-items:baseline;gap:7px;padding:0 10px 26px}
+  .logo b{font-size:21px;font-weight:750;letter-spacing:-.6px}
+  .logo b i{font-style:normal;color:var(--acc)}
+  .logo span{font-size:9px;letter-spacing:.3em;color:var(--ink-3);font-weight:600}
+  nav{display:flex;flex-direction:column;flex:1}
+  .nav-cap{font-size:9.5px;letter-spacing:.26em;color:var(--ink-3);padding:16px 10px 7px;font-weight:600;text-transform:uppercase}
+  nav a{display:flex;align-items:center;gap:10px;height:37px;padding:0 10px;color:var(--ink-2);
+    font-size:13px;font-weight:550;text-decoration:none;transition:all .14s;border-left:2px solid transparent;border-radius:0 6px 6px 0}
+  nav a svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round;opacity:.75}
+  nav a:hover{color:var(--ink);background:rgba(20,20,23,.035)}
+  nav a.active{color:var(--ink);font-weight:650;border-left-color:var(--acc);background:rgba(20,20,23,.04)}
+  nav a.active svg{opacity:1}
+  nav a .idx{margin-left:auto;font-family:var(--mono);font-size:9px;color:var(--ink-3)}
+  nav a.active .idx{color:var(--acc)}
+  .side-foot{border-top:1px solid var(--hair);padding:14px 10px 0}
+  .ver{font-size:10px;color:var(--ink-3);font-family:var(--mono);letter-spacing:.04em}
+  /* ── main ── */
+  main{display:flex;flex-direction:column;min-width:0;overflow:hidden;padding:0 28px}
+  .top{display:flex;align-items:flex-end;justify-content:space-between;padding:26px 0 18px;border-bottom:1px solid var(--hair)}
+  h1{font-size:30px;font-weight:700;letter-spacing:-1.2px}
+  h1 i{font-style:normal;color:var(--acc)}
+  .sub{font-size:12.5px;color:var(--ink-2);margin-top:8px;display:flex;gap:16px;align-items:center}
+  .sub .n{font-family:var(--mono);color:var(--ink-3)}
+  .sub .ok{color:var(--ink)}
+  .sub .ok::before{content:"●";color:var(--acc);font-size:8px;margin-right:6px;vertical-align:2px}
+  .top-r{display:flex;gap:10px;align-items:center;padding-bottom:4px}
+  .account{display:flex;align-items:center;gap:8px;height:36px;padding:0 14px;font-size:12.5px;font-weight:600;color:var(--ink-2);
+    border:1px solid var(--hair);border-radius:8px;background:#fff}
+  .account b{color:var(--ink);font-family:var(--mono);font-weight:600;font-size:12px}
+  .btn{height:36px;padding:0 18px;border:1px solid var(--ink);cursor:pointer;font-size:12.5px;font-weight:650;
+    color:#fff;background:var(--ink);border-radius:8px;transition:all .15s;font-family:inherit}
+  .btn:hover{background:var(--acc);border-color:var(--acc)}
+  /* tabs — underline style */
+  .tabs{display:flex;gap:2px;border-bottom:1px solid var(--hair)}
+  .tab{height:44px;padding:0 16px;display:flex;align-items:center;gap:8px;font-size:13px;font-weight:550;color:var(--ink-2);
+    cursor:pointer;transition:all .14s;border-bottom:2px solid transparent;margin-bottom:-1px}
+  .tab:hover{color:var(--ink)}
+  .tab.active{color:var(--ink);font-weight:650;border-bottom-color:var(--acc)}
+  .tab .n{font-family:var(--mono);font-size:10px;color:var(--ink-3)}
+  .tab.active .n{color:var(--acc)}
+  /* stats — hairline separated, no cards */
+  .stats{display:grid;grid-template-columns:repeat(4,1fr);border-bottom:1px solid var(--hair)}
+  .stat{padding:22px 24px 22px 0;border-right:1px solid var(--hair-2)}
+  .stat:last-child{border-right:none}
+  .stat{padding-left:24px}
+  .stat:first-child{padding-left:0}
+  .stat .k{font-size:10px;color:var(--ink-3);letter-spacing:.2em;font-weight:600;text-transform:uppercase}
+  .stat .v{font-size:40px;font-weight:700;margin-top:12px;letter-spacing:-1.5px;font-variant-numeric:tabular-nums;line-height:1}
+  .stat .v em{font-style:normal;font-size:14px;font-weight:500;color:var(--ink-3);margin-left:4px;letter-spacing:0}
+  .stat.hero .v{color:var(--acc)}
+  .stat .foot{margin-top:10px;font-size:12px;color:var(--ink-2)}
+  .stat .foot b{color:var(--ink);font-weight:650}
+  /* mid — flat sections */
+  .mid{display:grid;grid-template-columns:1.25fr 1.15fr 1fr;border-bottom:1px solid var(--hair)}
+  .card{padding:20px 24px;border-right:1px solid var(--hair-2)}
+  .card:last-child{border-right:none}
+  .card h3{font-size:11px;font-weight:650;color:var(--ink-2);display:flex;align-items:center;justify-content:space-between;letter-spacing:.14em;text-transform:uppercase}
+  .card h3 .tag{font-family:var(--mono);font-size:9px;color:var(--ink-3);letter-spacing:.1em}
+  .pity{display:flex;align-items:baseline;gap:4px;margin:16px 0 13px}
+  .pity b{font-size:46px;font-weight:700;letter-spacing:-2px;line-height:1;color:var(--acc)}
+  .pity span{font-size:15px;color:var(--ink-3);font-weight:500}
+  .pity .left{margin-left:auto;font-size:12px;color:var(--ink-2)}
+  .pity .left b{color:var(--ink);font-size:14px;font-weight:700}
+  .track{height:4px;border-radius:2px;background:var(--hair);overflow:hidden}
+  .fill{height:100%;width:0;border-radius:2px;background:var(--acc);transition:width 1.1s cubic-bezier(.2,.7,.2,1)}
+  .pity-fn{display:flex;justify-content:space-between;font-size:10.5px;color:var(--ink-3);margin-top:9px;font-family:var(--mono)}
+  /* banner */
+  .bnr-name{font-size:22px;font-weight:700;margin-top:15px;letter-spacing:-.6px}
+  .bnr-name span{font-size:13px;color:var(--acc);font-weight:650;margin-left:9px}
+  .bnr-meta{font-size:11.5px;color:var(--ink-3);margin-top:7px;font-family:var(--mono)}
+  .bnr-foot{margin-top:auto;display:flex;gap:14px;padding-top:16px;font-size:11.5px;color:var(--ink-2)}
+  .bnr-foot b{font-family:var(--mono);color:var(--ink);font-weight:600}
+  .bnr-foot .sep{color:var(--hair);margin:0 2px}
+  /* donut */
+  .donut-wrap{display:flex;align-items:center;gap:20px;flex:1}
+  .donut{width:110px;height:110px;border-radius:50%;flex-shrink:none;
+    background:conic-gradient(var(--ink) 0 71%,var(--hair) 71% 100%);
+    -webkit-mask:radial-gradient(circle,transparent 57%,#000 58.5%);mask:radial-gradient(circle,transparent 57%,#000 58.5%)}
+  .legend{display:flex;flex-direction:column;gap:12px;font-size:12px;color:var(--ink-2)}
+  .legend i{width:8px;height:8px;border-radius:2px;display:inline-block;margin-right:9px}
+  .legend b{font-size:16px;font-weight:700;color:var(--ink);margin-left:6px;font-variant-numeric:tabular-nums}
+  .legend .l1 i{background:var(--ink)}.legend .l2 i{background:var(--hair)}
+  .legend small{color:var(--ink-3);margin-left:6px;font-size:10px;font-family:var(--mono)}
+  /* bottom */
+  .bottom{display:grid;grid-template-columns:1.55fr 1fr;flex:1;min-height:0}
+  .bottom .card:first-child{border-right:1px solid var(--hair-2)}
+  table{width:100%;border-collapse:collapse;margin-top:8px}
+  th{font-size:9.5px;color:var(--ink-3);font-weight:600;text-align:left;padding:9px 6px;letter-spacing:.18em;text-transform:uppercase;
+    border-bottom:1px solid var(--hair)}
+  td{padding:10px 6px;font-size:13px;border-bottom:1px solid var(--hair-2);font-variant-numeric:tabular-nums}
+  tr:last-child td{border-bottom:none}
+  td .who{font-weight:650}
+  td .pool{color:var(--ink-3);font-size:12px}
+  td.mono{font-family:var(--mono);font-size:12px;color:var(--ink-2)}
+  .pill{display:inline-flex;align-items:center;height:22px;padding:0 9px;border-radius:5px;font-size:10.5px;font-weight:650;
+    letter-spacing:.04em}
+  .p-gold{background:var(--ink);color:#fff}
+  .p-off{background:rgba(255,68,0,.1);color:var(--acc)}
+  .p-lost{background:var(--hair);color:var(--ink-2)}
+  /* bars — hairline */
+  .bars{display:flex;align-items:flex-end;gap:10px;height:142px;margin-top:auto;padding-top:12px;position:relative}
+  .bars::before{content:"";position:absolute;left:0;right:0;bottom:22px;height:1px;background:var(--hair)}
+  .bar{flex:1;display:flex;flex-direction:column;align-items:center;gap:7px;height:100%;justify-content:flex-end;position:relative}
+  .bar i{width:100%;max-width:30px;background:var(--ink);min-height:2px;transition:height 1s cubic-bezier(.2,.7,.2,1);height:0;
+    border-radius:2px 2px 0 0}
+  .bar.hot i{background:var(--acc)}
+  .bar span{font-size:9px;color:var(--ink-3);font-family:var(--mono);white-space:nowrap}
+  .bar em{font-style:normal;font-size:10.5px;color:var(--ink-2);font-family:var(--mono);font-weight:600}
+  .corner{position:fixed;right:22px;bottom:16px;z-index:9;height:28px;padding:0 13px;display:flex;align-items:center;gap:8px;
+    font-size:10.5px;letter-spacing:.1em;color:var(--ink-2);background:#fff;border:1px solid var(--hair);border-radius:8px;font-family:var(--mono)}
+  .corner b{color:var(--acc)}
+  @keyframes rise{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+  .a{animation:rise .55s cubic-bezier(.2,.7,.2,1) both}
+  .d1{animation-delay:.04s}.d2{animation-delay:.1s}.d3{animation-delay:.16s}.d4{animation-delay:.22s}.d5{animation-delay:.28s}
+</style>
+</head>
+<body>
+<div class="corner"><b>04</b> 瑞士精密 · SWISS GRID</div>
+<div class="shell">
+  <aside class="sidebar a d1">
+    <div class="logo"><b>aMC<i>.</i>Suite</b><span>WIN</span></div>
+    <nav>
+      <div class="nav-cap">工作台</div>
+      <a href="#"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7.5" height="7.5" rx="2"/><rect x="13.5" y="3" width="7.5" height="7.5" rx="2"/><rect x="3" y="13.5" width="7.5" height="7.5" rx="2"/><rect x="13.5" y="13.5" width="7.5" height="7.5" rx="2"/></svg>总览<span class="idx">01</span></a>
+      <a href="#" class="active"><svg viewBox="0 0 24 24"><path d="M4 20V10M10 20V4M16 20v-7M21 20H3"/></svg>唤取分析<span class="idx">02</span></a>
+      <a href="#"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"/></svg>账号中心<span class="idx">03</span></a>
+      <div class="nav-cap">图鉴与工具</div>
+      <a href="#"><svg viewBox="0 0 24 24"><path d="M4 19V5a2 2 0 0 1 2-2h13v16H6a2 2 0 0 0-2 2z"/><path d="M4 19a2 2 0 0 0 2 2h13"/></svg>角色图鉴<span class="idx">04</span></a>
+      <a href="#"><svg viewBox="0 0 24 24"><path d="M12 3l8 4.5v9L12 21l-8-4.5v-9z"/><path d="M12 12l8-4.5M12 12v9M12 12L4 7.5"/></svg>声骸工具<span class="idx">05</span></a>
+      <a href="#"><svg viewBox="0 0 24 24"><rect x="4" y="3" width="16" height="18" rx="2.5"/><path d="M8 7h8M8 11h3M13 11h3M8 15h3M13 15h3"/></svg>养成计算<span class="idx">06</span></a>
+      <div class="nav-cap">资讯</div>
+      <a href="#"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2.5"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>资讯日历<span class="idx">07</span></a>
+      <a href="#"><svg viewBox="0 0 24 24"><rect x="4" y="9" width="16" height="12" rx="2"/><path d="M12 9v12M4 9h16l-1.5-4h-13zM9 5.5C9 4 10 3 11 3s1.5 1 1 2.5L11 9M15 5.5c0-1.5-1-2.5-2-2.5s-1.5 1-1 2.5L13 9"/></svg>兑换码<span class="idx">08</span></a>
+    </nav>
+    <div class="side-foot">
+      <div class="ver">v0.1.0 — WINDOWS/BUILD 26300</div>
+    </div>
+  </aside>
+  <main>
+    <header class="top a d2">
+      <div>
+        <h1>唤取分析<i>.</i></h1>
+        <div class="sub"><span class="ok">官方接口在线</span><span class="n">更新 14:32:07</span><span class="n">SCHEMA v3</span></div>
+      </div>
+      <div class="top-r">
+        <div class="account"><b>UID 100252731</b>国服 ▾</div>
+        <button class="btn">立即抓取</button>
+      </div>
+    </header>
+    <div class="tabs a d2">
+      <div class="tab active">角色活动唤取<span class="n">726</span></div>
+      <div class="tab">武器活动唤取<span class="n">318</span></div>
+      <div class="tab">角色常驻唤取<span class="n">142</span></div>
+      <div class="tab">武器常驻唤取<span class="n">41</span></div>
+      <div class="tab">新手唤取<span class="n">20</span></div>
+    </div>
+    <section class="stats">
+      <div class="stat hero a d3"><div class="k">累计唤取</div><div class="v"><span class="num" data-count="1247">0</span></div><div class="foot">本卡池 <b>726</b> 抽</div></div>
+      <div class="stat a d3"><div class="k">5★ 已获取</div><div class="v"><span class="num" data-count="14">0</span><em>★</em></div><div class="foot">4★ 共 <b>213</b> 个</div></div>
+      <div class="stat a d4"><div class="k">平均出金</div><div class="v"><span class="num" data-count="89.1" data-dec="1">0</span><em>抽</em></div><div class="foot">综合期望 <b>62.0</b> 抽</div></div>
+      <div class="stat a d4"><div class="k">欧非指数</div><div class="v">0.93</div><div class="foot">较均值<b>偏非 7%</b></div></div>
+    </section>
+    <section class="mid">
+      <div class="card a d4">
+        <h3>保底进度<span class="tag">PITY</span></h3>
+        <div class="pity"><b>73</b><span>/ 80</span><span class="left">距保底还有 <b>7</b> 抽</span></div>
+        <div class="track"><div class="fill" data-w="91%"></div></div>
+        <div class="pity-fn"><span>SOFT 65+</span><span>HARD 80</span></div>
+      </div>
+      <div class="card a d5">
+        <h3>当前卡池<span class="tag">BANNER</span></h3>
+        <div class="bnr-name">潮汐回响<span>今汐</span></div>
+        <div class="bnr-meta">2026.08.13 — 2026.09.10 · 角色活动唤取</div>
+        <div class="bnr-foot"><span>剩余<b>12</b>天</span><span class="sep">/</span><span>已垫<b>73</b>抽</span><span class="sep">/</span><span>5★<b>×2</b></span></div>
+      </div>
+      <div class="card a d5">
+        <h3>5★ 构成<span class="tag">RATIO</span></h3>
+        <div class="donut-wrap" style="margin-top:14px">
+          <div class="donut"></div>
+          <div class="legend">
+            <div class="l1"><i></i>限定<b>10</b><small>71%</small></div>
+            <div class="l2"><i></i>歪入常驻<b>4</b><small>29%</small></div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <section class="bottom">
+      <div class="card a d5">
+        <h3>最近 5★ 记录<span class="tag">RECENT</span></h3>
+        <table>
+          <tr><th style="width:80px">日期</th><th>名称</th><th style="width:140px">卡池</th><th style="width:80px">唤取</th><th style="width:80px">结果</th></tr>
+          <tr><td class="mono">08-21</td><td><span class="who">卡提希娅</span></td><td class="pool">角色活动唤取</td><td class="mono">80</td><td><span class="pill p-gold">不歪</span></td></tr>
+          <tr><td class="mono">07-30</td><td><span class="who">赞妮</span></td><td class="pool">角色活动唤取</td><td class="mono">11</td><td><span class="pill p-off">欧皇</span></td></tr>
+          <tr><td class="mono">07-12</td><td><span class="who">鉴心</span></td><td class="pool">角色常驻唤取</td><td class="mono">74</td><td><span class="pill p-lost">歪</span></td></tr>
+          <tr><td class="mono">06-28</td><td><span class="who">珂莱塔</span></td><td class="pool">角色活动唤取</td><td class="mono">88</td><td><span class="pill p-gold">不歪</span></td></tr>
+          <tr><td class="mono">06-10</td><td><span class="who">椿</span></td><td class="pool">角色活动唤取</td><td class="mono">78</td><td><span class="pill p-gold">不歪</span></td></tr>
+        </table>
+      </div>
+      <div class="card a d5">
+        <h3>出金分布<span class="tag">DIST</span></h3>
+        <div class="bars">
+          <div class="bar"><em>1</em><i data-h="12%"></i><span>≤10</span></div>
+          <div class="bar"><em>0</em><i data-h="3%"></i><span>11-20</span></div>
+          <div class="bar"><em>2</em><i data-h="24%"></i><span>21-30</span></div>
+          <div class="bar"><em>1</em><i data-h="12%"></i><span>31-40</span></div>
+          <div class="bar"><em>2</em><i data-h="24%"></i><span>41-50</span></div>
+          <div class="bar"><em>1</em><i data-h="12%"></i><span>51-60</span></div>
+          <div class="bar"><em>2</em><i data-h="24%"></i><span>61-70</span></div>
+          <div class="bar"><em>2</em><i data-h="24%"></i><span>71-75</span></div>
+          <div class="bar hot"><em>3</em><i data-h="36%"></i><span>76-80</span></div>
+        </div>
+      </div>
+    </section>
+  </main>
+</div>
+<script>
+  document.querySelectorAll('.num').forEach(el=>{
+    const t=parseFloat(el.dataset.count),dec=+(el.dataset.dec||0),t0=performance.now();
+    (function f(n){const p=Math.min((n-t0)/1100,1),e=1-Math.pow(1-p,3);
+      el.textContent=(t*e).toFixed(dec).replace(/\B(?=(\d{3})+(?!\d))/g,',');
+      if(p<1)requestAnimationFrame(f)})(t0);
+  });
+  requestAnimationFrame(()=>document.querySelectorAll('.fill').forEach(e=>e.style.width=e.dataset.w));
+  setTimeout(()=>document.querySelectorAll('.bar i').forEach(e=>e.style.height=e.dataset.h),350);
+</script>
+</body>
+</html>

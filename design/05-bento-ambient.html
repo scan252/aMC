@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>aMC · 方向05 Bento 氛围</title>
+<style>
+  :root{
+    --bg:#0D0D12; --card:#16161D; --card-2:#1B1B24;
+    --t1:#F2F1F6; --t2:#A6A4B3; --t3:#666475;
+    --gold:#F0B35C; --mint:#7DE0C3; --lav:#A78BFA; --rose:#FB7185; --sky:#7CC5F9;
+    --line:rgba(255,255,255,.06);
+    --mono:"Cascadia Code",Consolas,monospace;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html,body{height:100%}
+  body{
+    font-family:"Segoe UI Variable Display","Segoe UI","Microsoft YaHei UI","Microsoft YaHei",system-ui,sans-serif;
+    background:var(--bg);color:var(--t1);overflow:hidden;-webkit-font-smoothing:antialiased;
+  }
+  .shell{display:grid;grid-template-columns:228px 1fr;gap:14px;height:100vh;padding:14px}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:20px;position:relative;overflow:hidden}
+  .tint{position:absolute;inset:0;pointer-events:none;opacity:.8}
+  .tint-gold{background:radial-gradient(130% 110% at 90% -10%,rgba(240,179,92,.13),transparent 55%)}
+  .tint-mint{background:radial-gradient(130% 110% at 90% -10%,rgba(125,224,195,.1),transparent 55%)}
+  .tint-lav{background:radial-gradient(130% 110% at 90% -10%,rgba(167,139,250,.12),transparent 55%)}
+  .tint-rose{background:radial-gradient(130% 110% at 90% -10%,rgba(251,113,133,.1),transparent 55%)}
+  .tint-sky{background:radial-gradient(130% 110% at 90% -10%,rgba(124,197,249,.1),transparent 55%)}
+  /* ── sidebar ── */
+  .sidebar{display:flex;flex-direction:column;padding:20px 13px 14px}
+  .logo{display:flex;align-items:center;gap:11px;padding:2px 8px 20px}
+  .mark{width:36px;height:36px;border-radius:12px;display:grid;place-items:center;flex-shrink:none;
+    background:linear-gradient(135deg,#F6C87E,#E08F3C);color:#221503;font-weight:800;font-size:14px;
+    box-shadow:0 6px 18px -4px rgba(240,179,92,.5)}
+  .logo-t b{display:block;font-size:16.5px;font-weight:700;letter-spacing:-.2px}
+  .logo-t span{font-size:9px;letter-spacing:.3em;color:var(--t3);font-weight:600}
+  nav{display:flex;flex-direction:column;gap:3px;flex:1}
+  .nav-cap{font-size:9.5px;letter-spacing:.28em;color:var(--t3);padding:12px 10px 7px;font-weight:650}
+  nav a{display:flex;align-items:center;gap:11px;height:40px;padding:0 12px;border-radius:13px;
+    color:var(--t2);font-size:13.5px;font-weight:550;text-decoration:none;transition:all .2s}
+  nav a svg{width:17px;height:17px;stroke:currentColor;fill:none;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round;opacity:.85}
+  nav a:hover{background:rgba(255,255,255,.045);color:var(--t1)}
+  nav a.active{color:#221503;font-weight:700;
+    background:linear-gradient(135deg,#F6C87E,#E8A33D);box-shadow:0 8px 22px -8px rgba(240,179,92,.55)}
+  nav a.active svg{stroke:#221503;opacity:1}
+  .side-foot{border-top:1px solid var(--line);padding-top:12px}
+  .ver{font-size:10.5px;color:var(--t3);padding:4px 10px;font-family:var(--mono)}
+  /* ── main ── */
+  main{display:flex;flex-direction:column;gap:13px;min-width:0;overflow:hidden}
+  .top{display:flex;flex-direction:row;align-items:center;justify-content:space-between;padding:18px 22px}
+  h1{font-size:21px;font-weight:700;letter-spacing:-.3px}
+  .sub{font-size:12.5px;color:var(--t3);margin-top:5px;display:flex;align-items:center;gap:8px}
+  .dot{width:6px;height:6px;border-radius:50%;background:var(--mint);box-shadow:0 0 9px var(--mint)}
+  .top-r{display:flex;align-items:center;gap:11px}
+  .account{display:flex;align-items:center;gap:9px;height:38px;padding:0 15px;border-radius:999px;
+    font-size:12.5px;color:var(--t2);cursor:pointer;background:var(--card);border:1px solid var(--line)}
+  .account b{color:var(--t1);font-weight:650}
+  .btn{height:38px;padding:0 19px;border-radius:999px;border:none;cursor:pointer;font-size:13px;font-weight:700;
+    color:#221503;background:linear-gradient(135deg,#F6C87E,#E8A33D);letter-spacing:.02em;font-family:inherit;
+    box-shadow:0 10px 26px -8px rgba(240,179,92,.65);transition:all .2s}
+  .btn:hover{transform:translateY(-1px)}
+  /* tabs */
+  .tabs{display:flex;flex-direction:row;gap:5px;padding:7px;width:fit-content}
+  .tab{height:33px;padding:0 16px;display:flex;align-items:center;gap:7px;border-radius:11px;font-size:13px;font-weight:550;
+    color:var(--t2);cursor:pointer;transition:all .18s}
+  .tab:hover{color:var(--t1);background:rgba(255,255,255,.045)}
+  .tab.active{background:var(--card-2);color:var(--t1);font-weight:650;border:1px solid var(--line);box-shadow:0 4px 14px rgba(0,0,0,.3)}
+  .tab .n{font-family:var(--mono);font-size:10px;color:var(--t3)}
+  .tab.active .n{color:var(--gold)}
+  /* bento stats */
+  .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:13px}
+  .stat{padding:18px 20px}
+  .stat .k{font-size:11.5px;color:var(--t2);font-weight:600;display:flex;align-items:center;gap:8px}
+  .stat .k i{width:8px;height:8px;border-radius:3px;font-style:normal}
+  .stat .v{font-size:37px;font-weight:750;margin-top:10px;letter-spacing:-1px;font-variant-numeric:tabular-nums}
+  .stat .v em{font-style:normal;font-size:15px;font-weight:550;color:var(--t3);margin-left:4px;letter-spacing:0}
+  .stat .foot{margin-top:8px;font-size:11.5px;color:var(--t2)}
+  .stat .foot b{font-weight:700}
+  .i-gold{background:var(--gold);box-shadow:0 0 10px rgba(240,179,92,.6)}
+  .i-mint{background:var(--mint);box-shadow:0 0 10px rgba(125,224,195,.5)}
+  .i-lav{background:var(--lav);box-shadow:0 0 10px rgba(167,139,250,.5)}
+  .i-rose{background:var(--rose);box-shadow:0 0 10px rgba(251,113,133,.5)}
+  /* mid bento */
+  .mid{display:grid;grid-template-columns:1.25fr 1.15fr 1fr;gap:13px;flex:1;min-height:225px}
+  .mid .card,.bottom .card{padding:19px 21px;display:flex;flex-direction:column}
+  .card h3{font-size:13px;font-weight:650;color:var(--t2);display:flex;align-items:center;justify-content:space-between}
+  .card h3 .tag{font-size:9.5px;font-family:var(--mono);color:var(--t3);letter-spacing:.16em}
+  .pity{display:flex;align-items:baseline;gap:5px;margin:15px 0 12px}
+  .pity b{font-size:44px;font-weight:750;letter-spacing:-1.5px;
+    background:linear-gradient(120deg,#F6C87E,#E8A33D);-webkit-background-clip:text;background-clip:text;color:transparent}
+  .pity span{font-size:15px;color:var(--t3);font-weight:550}
+  .pity .left{margin-left:auto;font-size:12px;color:var(--t2)}
+  .pity .left b{color:var(--gold);font-size:14px}
+  .track{height:9px;border-radius:6px;background:rgba(255,255,255,.06);overflow:hidden}
+  .fill{height:100%;width:0;border-radius:6px;background:linear-gradient(90deg,#E8A33D,#F6C87E);
+    box-shadow:0 0 12px rgba(240,179,92,.45);transition:width 1.2s cubic-bezier(.2,.7,.2,1)}
+  .pity-fn{display:flex;justify-content:space-between;font-size:10.5px;color:var(--t3);margin-top:9px}
+  /* banner */
+  .bnr-name{font-size:21px;font-weight:700;margin-top:14px;letter-spacing:-.3px}
+  .bnr-name span{font-size:13px;color:var(--mint);font-weight:650;margin-left:9px}
+  .bnr-meta{font-size:11.5px;color:var(--t3);margin-top:6px}
+  .bnr-foot{margin-top:auto;display:flex;gap:8px;padding-top:15px;flex-wrap:wrap}
+  .chip{height:26px;padding:0 12px;border-radius:999px;font-size:11px;font-weight:650;display:flex;align-items:center;gap:6px}
+  .chip-gold{background:rgba(240,179,92,.13);color:var(--gold);border:1px solid rgba(240,179,92,.22)}
+  .chip-mint{background:rgba(125,224,195,.1);color:var(--mint);border:1px solid rgba(125,224,195,.2)}
+  .chip-dim{background:rgba(255,255,255,.045);color:var(--t2);border:1px solid var(--line)}
+  /* donut */
+  .donut-wrap{display:flex;align-items:center;gap:19px;flex:1}
+  .donut{width:112px;height:112px;border-radius:50%;flex-shrink:none;
+    background:conic-gradient(var(--gold) 0 71%,var(--lav) 71% 100%);
+    -webkit-mask:radial-gradient(circle,transparent 56%,#000 57.5%);mask:radial-gradient(circle,transparent 56%,#000 57.5%);
+    filter:drop-shadow(0 0 14px rgba(240,179,92,.25))}
+  .legend{display:flex;flex-direction:column;gap:11px;font-size:12.5px}
+  .legend i{width:9px;height:9px;border-radius:3px;display:inline-block;margin-right:8px}
+  .legend b{font-size:16px;font-weight:700;margin-left:6px;font-variant-numeric:tabular-nums}
+  .legend .l1 i{background:var(--gold)}.legend .l2 i{background:var(--lav)}
+  .legend small{color:var(--t3);margin-left:6px;font-size:10.5px}
+  /* bottom */
+  .bottom{display:grid;grid-template-columns:1.55fr 1fr;gap:13px;height:252px}
+  table{width:100%;border-collapse:collapse;margin-top:8px}
+  th{font-size:10.5px;color:var(--t3);font-weight:600;text-align:left;padding:9px 8px;letter-spacing:.1em;border-bottom:1px solid var(--line)}
+  td{padding:10px 8px;font-size:13.5px;border-bottom:1px solid rgba(255,255,255,.04);font-variant-numeric:tabular-nums}
+  tr:last-child td{border-bottom:none}
+  td .who{font-weight:650}
+  td .pool{color:var(--t3);font-size:12px}
+  td.mono{font-family:var(--mono);font-size:12.5px;color:var(--t2)}
+  .pill{display:inline-flex;align-items:center;height:24px;padding:0 11px;border-radius:999px;font-size:11px;font-weight:650}
+  .p-gold{background:rgba(240,179,92,.13);color:var(--gold);border:1px solid rgba(240,179,92,.22)}
+  .p-mint{background:rgba(125,224,195,.1);color:var(--mint);border:1px solid rgba(125,224,195,.2)}
+  .p-lav{background:rgba(167,139,250,.12);color:var(--lav);border:1px solid rgba(167,139,250,.22)}
+  /* bars */
+  .bars{display:flex;align-items:flex-end;gap:9px;height:148px;margin-top:auto;padding-top:12px}
+  .bar{flex:1;display:flex;flex-direction:column;align-items:center;gap:7px;height:100%;justify-content:flex-end}
+  .bar i{width:100%;max-width:26px;border-radius:7px 7px 3px 3px;background:rgba(255,255,255,.09);min-height:3px;
+    transition:height 1s cubic-bezier(.2,.7,.2,1);height:0}
+  .bar.hot i{background:linear-gradient(180deg,#F6C87E,#E8A33D);box-shadow:0 0 16px rgba(240,179,92,.4)}
+  .bar span{font-size:9.5px;color:var(--t3);font-family:var(--mono);white-space:nowrap}
+  .bar em{font-style:normal;font-size:10.5px;color:var(--t2);font-weight:650;font-family:var(--mono)}
+  .corner{position:fixed;right:18px;bottom:16px;z-index:9;height:30px;padding:0 14px;border-radius:999px;
+    display:flex;align-items:center;gap:8px;font-size:11px;letter-spacing:.06em;color:var(--t2);
+    background:rgba(22,22,29,.85);border:1px solid var(--line);backdrop-filter:blur(10px)}
+  .corner b{color:var(--gold)}
+  @keyframes rise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+  .a{animation:rise .6s cubic-bezier(.2,.7,.2,1) both}
+  .d1{animation-delay:.05s}.d2{animation-delay:.11s}.d3{animation-delay:.17s}.d4{animation-delay:.23s}.d5{animation-delay:.3s}.d6{animation-delay:.38s}
+</style>
+</head>
+<body>
+<div class="corner"><b>05</b> Bento 氛围 · AMBIENT GRID</div>
+<div class="shell">
+  <aside class="sidebar card a d1">
+    <div class="logo">
+      <div class="mark">aMC</div>
+      <div class="logo-t"><b>aMC Suite</b><span>WUTHERING WAVES</span></div>
+    </div>
+    <nav>
+      <div class="nav-cap">工作台</div>
+      <a href="#"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7.5" height="7.5" rx="2"/><rect x="13.5" y="3" width="7.5" height="7.5" rx="2"/><rect x="3" y="13.5" width="7.5" height="7.5" rx="2"/><rect x="13.5" y="13.5" width="7.5" height="7.5" rx="2"/></svg>总览</a>
+      <a href="#" class="active"><svg viewBox="0 0 24 24"><path d="M4 20V10M10 20V4M16 20v-7M21 20H3"/></svg>唤取分析</a>
+      <a href="#"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"/></svg>账号中心</a>
+      <div class="nav-cap">图鉴与工具</div>
+      <a href="#"><svg viewBox="0 0 24 24"><path d="M4 19V5a2 2 0 0 1 2-2h13v16H6a2 2 0 0 0-2 2z"/><path d="M4 19a2 2 0 0 0 2 2h13"/></svg>角色图鉴</a>
+      <a href="#"><svg viewBox="0 0 24 24"><path d="M12 3l8 4.5v9L12 21l-8-4.5v-9z"/><path d="M12 12l8-4.5M12 12v9M12 12L4 7.5"/></svg>声骸工具</a>
+      <a href="#"><svg viewBox="0 0 24 24"><rect x="4" y="3" width="16" height="18" rx="2.5"/><path d="M8 7h8M8 11h3M13 11h3M8 15h3M13 15h3"/></svg>养成计算</a>
+      <div class="nav-cap">资讯</div>
+      <a href="#"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2.5"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>资讯日历</a>
+      <a href="#"><svg viewBox="0 0 24 24"><rect x="4" y="9" width="16" height="12" rx="2"/><path d="M12 9v12M4 9h16l-1.5-4h-13zM9 5.5C9 4 10 3 11 3s1.5 1 1 2.5L11 9M15 5.5c0-1.5-1-2.5-2-2.5s-1.5 1-1 2.5L13 9"/></svg>兑换码</a>
+    </nav>
+    <div class="side-foot">
+      <div class="ver">aMC Suite v0.1.0 · Windows</div>
+    </div>
+  </aside>
+  <main>
+    <header class="top card a d2">
+      <div>
+        <h1>唤取分析</h1>
+        <div class="sub"><span class="dot"></span>数据更新于今天 14:32 · 来自官方唤取接口</div>
+      </div>
+      <div class="top-r">
+        <div class="account"><b>UID 100252731</b>国服 ▾</div>
+        <button class="btn">立即抓取</button>
+      </div>
+    </header>
+    <div class="tabs card a d2">
+      <div class="tab active">角色活动唤取<span class="n">726</span></div>
+      <div class="tab">武器活动唤取<span class="n">318</span></div>
+      <div class="tab">角色常驻唤取<span class="n">142</span></div>
+      <div class="tab">武器常驻唤取<span class="n">41</span></div>
+      <div class="tab">新手唤取<span class="n">20</span></div>
+    </div>
+    <section class="stats">
+      <div class="stat card a d3"><div class="tint tint-gold"></div><div class="k"><i class="i-gold"></i>累计唤取</div><div class="v"><span class="num" data-count="1247">0</span></div><div class="foot">本卡池 <b>726</b> 抽</div></div>
+      <div class="stat card a d3"><div class="tint tint-mint"></div><div class="k"><i class="i-mint"></i>5★ 已获取</div><div class="v"><span class="num" data-count="14">0</span><em>★</em></div><div class="foot">4★ 共 213 个</div></div>
+      <div class="stat card a d4"><div class="tint tint-lav"></div><div class="k"><i class="i-lav"></i>平均出金</div><div class="v"><span class="num" data-count="89.1" data-dec="1">0</span><em>抽</em></div><div class="foot">综合期望 62.0 抽</div></div>
+      <div class="stat card a d4"><div class="tint tint-rose"></div><div class="k"><i class="i-rose"></i>欧非指数</div><div class="v">0.93</div><div class="foot">较均值<b>偏非 7%</b></div></div>
+    </section>
+    <section class="mid">
+      <div class="card a d4"><div class="tint tint-gold"></div>
+        <h3>保底进度<span class="tag">PITY</span></h3>
+        <div class="pity"><b>73</b><span>/ 80</span><span class="left">距保底还有 <b>7</b> 抽</span></div>
+        <div class="track"><div class="fill" data-w="91%"></div></div>
+        <div class="pity-fn"><span>软保底 65 抽起概率提升</span><span>硬保底 80</span></div>
+      </div>
+      <div class="card a d5"><div class="tint tint-mint"></div>
+        <h3>当前卡池<span class="tag">BANNER</span></h3>
+        <div class="bnr-name">潮汐回响<span>今汐</span></div>
+        <div class="bnr-meta">2026.08.13 — 2026.09.10 · 角色活动唤取</div>
+        <div class="bnr-foot"><span class="chip chip-mint">剩余 12 天</span><span class="chip chip-dim">已垫 73 抽</span><span class="chip chip-gold">5★ ×2</span></div>
+      </div>
+      <div class="card a d5"><div class="tint tint-lav"></div>
+        <h3>5★ 构成<span class="tag">RATIO</span></h3>
+        <div class="donut-wrap" style="margin-top:13px">
+          <div class="donut"></div>
+          <div class="legend">
+            <div class="l1"><i></i>限定<b>10</b><small>71%</small></div>
+            <div class="l2"><i></i>歪入常驻<b>4</b><small>29%</small></div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <section class="bottom">
+      <div class="card a d5"><div class="tint tint-sky"></div>
+        <h3>最近 5★ 记录<span class="tag">RECENT</span></h3>
+        <table>
+          <tr><th style="width:86px">日期</th><th>名称</th><th style="width:150px">卡池</th><th style="width:88px">唤取次数</th><th style="width:84px">结果</th></tr>
+          <tr><td class="mono">08-21</td><td><span class="who">卡提希娅</span></td><td class="pool">角色活动唤取</td><td>80 抽</td><td><span class="pill p-gold">不歪</span></td></tr>
+          <tr><td class="mono">07-30</td><td><span class="who">赞妮</span></td><td class="pool">角色活动唤取</td><td>11 抽</td><td><span class="pill p-mint">欧皇</span></td></tr>
+          <tr><td class="mono">07-12</td><td><span class="who">鉴心</span></td><td class="pool">角色常驻唤取</td><td>74 抽</td><td><span class="pill p-lav">歪</span></td></tr>
+          <tr><td class="mono">06-28</td><td><span class="who">珂莱塔</span></td><td class="pool">角色活动唤取</td><td>88 抽</td><td><span class="pill p-gold">不歪</span></td></tr>
+          <tr><td class="mono">06-10</td><td><span class="who">椿</span></td><td class="pool">角色活动唤取</td><td>78 抽</td><td><span class="pill p-gold">不歪</span></td></tr>
+        </table>
+      </div>
+      <div class="card a d6"><div class="tint tint-gold"></div>
+        <h3>出金分布<span class="tag">DIST</span></h3>
+        <div class="bars">
+          <div class="bar"><em>1</em><i data-h="12%"></i><span>≤10</span></div>
+          <div class="bar"><em>0</em><i data-h="3%"></i><span>11-20</span></div>
+          <div class="bar"><em>2</em><i data-h="24%"></i><span>21-30</span></div>
+          <div class="bar"><em>1</em><i data-h="12%"></i><span>31-40</span></div>
+          <div class="bar"><em>2</em><i data-h="24%"></i><span>41-50</span></div>
+          <div class="bar"><em>1</em><i data-h="12%"></i><span>51-60</span></div>
+          <div class="bar"><em>2</em><i data-h="24%"></i><span>61-70</span></div>
+          <div class="bar"><em>2</em><i data-h="24%"></i><span>71-75</span></div>
+          <div class="bar hot"><em>3</em><i data-h="36%"></i><span>76-80</span></div>
+        </div>
+      </div>
+    </section>
+  </main>
+</div>
+<script>
+  document.querySelectorAll('.num').forEach(el=>{
+    const t=parseFloat(el.dataset.count),dec=+(el.dataset.dec||0),t0=performance.now();
+    (function f(n){const p=Math.min((n-t0)/1100,1),e=1-Math.pow(1-p,3);
+      el.textContent=(t*e).toFixed(dec).replace(/\B(?=(\d{3})+(?!\d))/g,',');
+      if(p<1)requestAnimationFrame(f)})(t0);
+  });
+  requestAnimationFrame(()=>document.querySelectorAll('.fill').forEach(e=>e.style.width=e.dataset.w));
+  setTimeout(()=>document.querySelectorAll('.bar i').forEach(e=>e.style.height=e.dataset.h),350);
+</script>
+</body>
+</html>
