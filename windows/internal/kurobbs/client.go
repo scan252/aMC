@@ -156,3 +156,25 @@ func (c *RealClient) WidgetData(account *Account) (*WidgetData, error) {
 	}
 	return &w, nil
 }
+
+func (c *RealClient) ForumList(account *Account, limit int) ([]ForumPost, error) {
+	data, err := c.post("/forum/list", map[string]string{"forumId": "6", "page": "1"}, account)
+	if err != nil {
+		return nil, err
+	}
+	var raw struct {
+		List []ForumPost `json:"list"`
+	}
+	if err := json.Unmarshal(data, &raw); err != nil {
+		return nil, err
+	}
+	if limit > 0 && len(raw.List) > limit {
+		raw.List = raw.List[:limit]
+	}
+	return raw.List, nil // ⏸ forumId 与响应字段待真实联调校准
+}
+
+func (c *RealClient) RedeemCodes() ([]RedeemCode, error) {
+	// 兑换码暂无官方接口，真实模式返回空列表，由社区数据源后续接入
+	return []RedeemCode{}, nil
+}

@@ -1,0 +1,82 @@
+{
+  "version": "seed-0.1",
+  "note": "内置种子库：仅覆盖首批数据，角色/声骸条目与词条满值将随版本更新通道逐步扩充与校准",
+  "characters": [
+    { "id": "jiyan", "name": "忌炎", "rarity": 5, "element": "气动", "weapon": "长刃" },
+    { "id": "yinlin", "name": "吟霖", "rarity": 5, "element": "导电", "weapon": "音感仪" },
+    { "id": "jinhsi", "name": "今汐", "rarity": 5, "element": "衍射", "weapon": "音感仪" },
+    { "id": "changli", "name": "长离", "rarity": 5, "element": "热熔", "weapon": "长刃" },
+    { "id": "zhezhi", "name": "折枝", "rarity": 5, "element": "冷凝", "weapon": "音感仪" },
+    { "id": "xiangliyao", "name": "相里要", "rarity": 5, "element": "导电", "weapon": "臂铠" },
+    { "id": "camellya", "name": "椿", "rarity": 5, "element": "湮灭", "weapon": "迅刀" },
+    { "id": "shorekeeper", "name": "守岸人", "rarity": 5, "element": "衍射", "weapon": "音感仪" },
+    { "id": "carlotta", "name": "珂莱塔", "rarity": 5, "element": "冷凝", "weapon": "佩枪" },
+    { "id": "roccia", "name": "洛可可", "rarity": 5, "element": "湮灭", "weapon": "臂铠" },
+    { "id": "phoebe", "name": "菲比", "rarity": 5, "element": "衍射", "weapon": "音感仪" },
+    { "id": "brant", "name": "布兰特", "rarity": 5, "element": "热熔", "weapon": "长刃" },
+    { "id": "cantarella", "name": "卡提希娅", "rarity": 5, "element": "湮灭", "weapon": "音感仪" },
+    { "id": "zani", "name": "赞妮", "rarity": 5, "element": "衍射", "weapon": "臂铠" },
+    { "id": "ciaccona", "name": "夏空", "rarity": 5, "element": "气动", "weapon": "音感仪" },
+    { "id": "calcharo", "name": "卡卡罗", "rarity": 5, "element": "导电", "weapon": "迅刀" },
+    { "id": "encore", "name": "安可", "rarity": 5, "element": "热熔", "weapon": "音感仪" },
+    { "id": "lingyang", "name": "凌阳", "rarity": 5, "element": "冷凝", "weapon": "臂铠" },
+    { "id": "verina", "name": "维里奈", "rarity": 5, "element": "衍射", "weapon": "音感仪" },
+    { "id": "jianxin", "name": "鉴心", "rarity": 5, "element": "气动", "weapon": "佩枪" },
+    { "id": "yuanwu", "name": "渊武", "rarity": 4, "element": "导电", "weapon": "臂铠" },
+    { "id": "baizhi", "name": "白芷", "rarity": 4, "element": "衍射", "weapon": "音感仪" },
+    { "id": "yangyang", "name": "秧秧", "rarity": 4, "element": "气动", "weapon": "迅刀" },
+    { "id": "chixia", "name": "炽霞", "rarity": 4, "element": "热熔", "weapon": "佩枪" },
+    { "id": "sanhua", "name": "散华", "rarity": 4, "element": "冷凝", "weapon": "迅刀" },
+    { "id": "danjin", "name": "丹瑾", "rarity": 4, "element": "湮灭", "weapon": "佩枪" },
+    { "id": "mortefi", "name": "莫特斐", "rarity": 4, "element": "热熔", "weapon": "佩枪" },
+    { "id": "taoqi", "name": "桃祈", "rarity": 4, "element": "衍射", "weapon": "长刃" },
+    { "id": "aalto", "name": "秋水", "rarity": 4, "element": "气动", "weapon": "佩枪" },
+    { "id": "youhu", "name": "釉瑚", "rarity": 4, "element": "冷凝", "weapon": "音感仪" },
+    { "id": "lumi", "name": "灯灯", "rarity": 4, "element": "导电", "weapon": "臂铠" }
+  ],
+  "echoes": [
+    { "id": "caudata", "name": "无冠者", "set": "凝夜白", "cost": 4, "main": ["暴击", "暴击伤害", "治疗功效加成"] },
+    { "id": "bellborne", "name": "鸣钟之龟", "set": "隐世回光", "cost": 4, "main": ["暴击", "暴击伤害", "治疗功效加成"] },
+    { "id": "thundering", "name": "朔雷之鳞", "set": "彻空冥雷", "cost": 4, "main": ["暴击", "暴击伤害", "治疗功效加成"] },
+    { "id": "feilian", "name": "飞廉之头", "set": "啸谷长风", "cost": 4, "main": ["暴击", "暴击伤害", "治疗功效加成"] },
+    { "id": "lampylumen", "name": "辉萤军势", "set": "轻云出月", "cost": 4, "main": ["暴击", "暴击伤害", "治疗功效加成"] },
+    { "id": "mourner", "name": "哀声鸷", "set": "余音", "cost": 4, "main": ["暴击", "暴击伤害", "治疗功效加成"] },
+    { "id": "crownless", "name": "无冕之王", "set": "沉日劫明", "cost": 4, "main": ["暴击", "暴击伤害", "治疗功效加成"] },
+    { "id": "mecabot", "name": "聚械机偶", "set": "裂变雌莱", "cost": 4, "main": ["暴击", "暴击伤害", "治疗功效加成"] }
+  ],
+  "scoreTables": {
+    "substats": [
+      { "name": "暴击", "max": 6.3 },
+      { "name": "暴击伤害", "max": 12.6 },
+      { "name": "攻击力%", "max": 5.8 },
+      { "name": "生命%", "max": 5.8 },
+      { "name": "防御%", "max": 6.72 },
+      { "name": "共鸣效率", "max": 6.8 },
+      { "name": "属性伤害加成", "max": 6.6 },
+      { "name": "普攻伤害加成", "max": 6.6 },
+      { "name": "重击伤害加成", "max": 6.6 },
+      { "name": "共鸣技能伤害加成", "max": 6.6 },
+      { "name": "共鸣解放伤害加成", "max": 6.6 },
+      { "name": "小攻击", "max": 30.0 },
+      { "name": "小生命", "max": 320.0 },
+      { "name": "小防御", "max": 34.0 }
+    ],
+    "schemes": [
+      {
+        "name": "双爆通用",
+        "note": "暴击与爆伤优先，适合绝大多数输出角色",
+        "ratio": { "暴击": 1.0, "暴击伤害": 1.0, "攻击力%": 0.7, "属性伤害加成": 0.7, "共鸣效率": 0.4, "普攻伤害加成": 0.4, "重击伤害加成": 0.4, "共鸣技能伤害加成": 0.4, "共鸣解放伤害加成": 0.4, "生命%": 0, "防御%": 0, "小攻击": 0, "小生命": 0, "小防御": 0 }
+      },
+      {
+        "name": "攻击主C",
+        "note": "攻击力与双爆并重",
+        "ratio": { "暴击": 1.0, "暴击伤害": 1.0, "攻击力%": 1.0, "属性伤害加成": 0.6, "共鸣效率": 0.3, "普攻伤害加成": 0.3, "重击伤害加成": 0.3, "共鸣技能伤害加成": 0.3, "共鸣解放伤害加成": 0.3, "生命%": 0, "防御%": 0, "小攻击": 0.1, "小生命": 0, "小防御": 0 }
+      },
+      {
+        "name": "辅助/治疗",
+        "note": "共鸣效率与生命优先",
+        "ratio": { "暴击": 0.3, "暴击伤害": 0.3, "攻击力%": 0.4, "属性伤害加成": 0.2, "共鸣效率": 1.0, "生命%": 0.8, "防御%": 0.5, "普攻伤害加成": 0, "重击伤害加成": 0, "共鸣技能伤害加成": 0, "共鸣解放伤害加成": 0, "小攻击": 0, "小生命": 0.1, "小防御": 0.1 }
+      }
+    ]
+  }
+}

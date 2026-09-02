@@ -75,3 +75,23 @@ func maskPhone(phone string) string {
 	}
 	return phone[:3] + "****" + phone[7:]
 }
+
+func (m *MockClient) ForumList(account *Account, limit int) ([]ForumPost, error) {
+	posts := []ForumPost{
+		{ID: "p1", Title: "「潮汐回响」版本活动预告", Summary: "新版本限时活动即将开启，参与可获得星声与养成材料。", Time: "2026-09-01", URL: "https://www.kurobbs.com/mc"},
+		{ID: "p2", Title: "唤取「今汐」概率UP公告", Summary: "角色活动唤取「汐潮逐浪」概率提升开启时间说明。", Time: "2026-08-28", URL: "https://www.kurobbs.com/mc"},
+		{ID: "p3", Title: "维护更新说明 2.7.1", Summary: "修复了若干已知问题，优化了部分体验。", Time: "2026-08-25", URL: "https://www.kurobbs.com/mc"},
+		{ID: "p4", Title: "深塔/sol3塔层奖励调整说明", Summary: "对逆境深塔奖励内容进行例行轮换。", Time: "2026-08-20", URL: "https://www.kurobbs.com/mc"},
+	}
+	if limit > 0 && len(posts) > limit {
+		posts = posts[:limit]
+	}
+	return posts, nil
+}
+
+func (m *MockClient) RedeemCodes() ([]RedeemCode, error) {
+	return []RedeemCode{
+		{Code: "WUMINGYOU", Reward: "星声 ×50", Source: "版本直播", Date: "2026-08-13", Expired: false},
+		{Code: "MINGCHAO2026", Reward: "贝币 ×10000", Source: "官方社区", Date: "2026-08-01", Expired: true},
+	}, nil
+}

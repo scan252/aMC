@@ -68,10 +68,32 @@ type Client interface {
 	SignIn(account *Account, role Role) error
 	// WidgetData 拉取小组件（体力等）数据。
 	WidgetData(account *Account) (*WidgetData, error)
+	// ForumList 拉取官方资讯帖子列表。
+	ForumList(account *Account, limit int) ([]ForumPost, error)
+	// RedeemCodes 获取兑换码列表。
+	RedeemCodes() ([]RedeemCode, error)
 }
 
 // UserInfo 个人信息。
 type UserInfo struct {
 	Name  string `json:"name"`
 	Level int    `json:"level"`
+}
+
+// ForumPost 资讯帖子。
+type ForumPost struct {
+	ID      string `json:"id"`
+	Title   string `json:"title"`
+	Summary string `json:"summary"`
+	Time    string `json:"time"`
+	URL     string `json:"url"`
+}
+
+// RedeemCode 兑换码条目（种子 + 社区渠道，结构先行）。
+type RedeemCode struct {
+	Code    string `json:"code"`
+	Reward  string `json:"reward"`
+	Source  string `json:"source"`
+	Date    string `json:"date"`
+	Expired bool   `json:"expired"`
 }

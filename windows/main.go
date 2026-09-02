@@ -12,6 +12,10 @@ var assets embed.FS
 
 func main() {
 	kuroSvc := NewKurobbsService()
+	gameSvc, err := NewGameDataService()
+	if err != nil {
+		log.Fatal(err)
+	}
 	app := application.New(application.Options{
 		Name:        "aMC Suite",
 		Description: "Wuthering Waves Companion for Windows",
@@ -20,6 +24,8 @@ func main() {
 			application.NewService(&GachaService{}),
 			application.NewService(kuroSvc),
 			application.NewService(&SettingsService{}),
+			application.NewService(gameSvc),
+			application.NewService(NewNewsService()),
 		},
 		Assets: application.AssetOptions{
 			Handler: application.AssetFileServerFS(assets),
@@ -47,7 +53,7 @@ func main() {
 		app.Event.Emit("app:notify", map[string]string{"title": title, "body": body})
 	})
 
-	err := app.Run()
+	err = app.Run()
 	if err != nil {
 		log.Fatal(err)
 	}

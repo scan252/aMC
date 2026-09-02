@@ -3,12 +3,16 @@
 
 import * as AppService from "./appservice.js";
 import * as GachaService from "./gachaservice.js";
+import * as GameDataService from "./gamedataservice.js";
 import * as KurobbsService from "./kurobbsservice.js";
+import * as NewsService from "./newsservice.js";
 import * as SettingsService from "./settingsservice.js";
 export {
     AppService,
     GachaService,
+    GameDataService,
     KurobbsService,
+    NewsService,
     SettingsService
 };
 
