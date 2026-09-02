@@ -1,0 +1,13 @@
+[Desktop Entry]
+Version=1.0
+Name=My Product
+Comment=Wuthering Waves Companion for Windows
+# The Exec line includes %u to pass the URL to the application
+Exec=/usr/local/bin/amc_suite.exe %u
+Terminal=false
+Type=Application
+Icon=amc_suite.exe
+Categories=Utility;
+StartupWMClass=amc_suite.exe
+
+ 

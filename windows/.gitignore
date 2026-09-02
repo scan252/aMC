@@ -10,3 +10,13 @@ build/ios/xcode/gen/
 build/android/overlay.json
 build/android/gen/
 *.exe
+
+# 平台资产仅保留 Taskfile（CI 任务解析需要），大体积资源不入库
+build/darwin/*
+!build/darwin/Taskfile.yml
+build/ios/*
+!build/ios/Taskfile.yml
+build/android/*
+!build/android/Taskfile.yml
+build/docker/*
+!build/docker/Taskfile.yml

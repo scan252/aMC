@@ -4,7 +4,7 @@ __pycache__/
 .venv/
 venv/
 dist/
-build/
+/build/
 .pytest_cache/
 .amc/
 
