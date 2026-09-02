@@ -1,59 +1,71 @@
-# Welcome to Your New Wails3 Project!
+# aMC Suite for Windows
 
-Congratulations on generating your Wails3 application! This README will guide you through the next steps to get your project up and running.
+《鸣潮》玩家的 Windows 桌面综合工具站：**唤取分析 · 账号管家 · 图鉴工具 · 资讯日历**，一站常驻。
 
-## Getting Started
+> 基于 Wails v3（Go + WebView2）+ Vue 3 + TypeScript 构建，单 exe ≈ 12 MB，深色「曜黑玻璃」视觉。
+> 上游 Mac 版（Python CLI）：[aMC 主分支](../README.md)，两端抽卡数据格式互通。
 
-1. Navigate to your project directory in the terminal.
+## 功能总览
 
-2. To run your application in development mode, use the following command:
+| 域 | 功能 | 状态 |
+|----|------|------|
+| 抽卡 | 日志自动发现（注册表/启动器/盘扫三级）→ 解密 → 官方接口拉取 13 卡池 → 增量合并 → 本地存储 | ✅ |
+| 抽卡 | 分析看板：累计/平均出金/欧非指数/保底进度/5★构成/出金分布/最近 5★ | ✅ |
+| 抽卡 | 多账号管理、JSON 导入导出（兼容 Mac 版格式）、手动指定日志路径 | ✅ |
+| 账号 | 库街区绑定（短信登录底座+演示模式）、每日签到、结晶波片监控 | ✅ 底座 |
+| 桌面 | 系统托盘（快览/签到/自启开关）、每日自动签到调度、波片回满提醒、开机自启、应用内通知 | ✅ |
+| 工具 | 声骸评分器（等效词条/权重方案/评级）、角色图鉴（搜索筛选） | ✅ |
+| 资讯 | 官方公告聚合（接口封装+演示数据）、兑换码列表 | ✅ 结构 |
+| 规划中 | 养成材料计算、卡池历史日历、伤害计算、WebDAV 同步、自更新 | 🚧 |
 
-   ```
-   wails3 dev
-   ```
+## 开发
 
-   This will start your application and enable hot-reloading for both frontend and backend changes.
+```bash
+# 依赖：Go 1.27+、Node 20+、WebView2（Win10/11 自带）
+go install github.com/wailsapp/wails/v3/cmd/wails3@v3.0.0-beta.16
 
-3. To build your application for production, use:
+wails3 task build        # 生产构建 → bin/amc-suite.exe
+wails3 task dev          # 开发模式（热重载）
+go test ./internal/...   # 单元测试
+wails3 generate bindings # 重新生成前端绑定（改 Go 服务后）
+```
 
-   ```
-   wails3 build
-   ```
+## 目录结构
 
-   This will create a production-ready executable in the `build` directory.
+```
+windows/
+├── main.go                  # 应用入口：窗口/托盘/调度/服务注册
+├── gachaservice.go          # 抽卡域服务（抓取/账号/导入导出）
+├── kurobbservice.go         # 账号域服务（绑定/签到/波片）
+├── gamedataservice.go       # 图鉴与声骸评分服务
+├── settingsservice.go       # 设置服务
+├── scheduler.go             # 托盘 + 每日签到/体力提醒调度
+├── autostart_windows.go     # HKCU 注册表开机自启
+├── internal/
+│   ├── wulog/               # 日志发现/解密/URL 提取
+│   ├── gacha/               # 凭证/官方接口/合并/存储/统计
+│   ├── kurobbs/             # 库街区客户端（真实+演示双轨）/凭证存储
+│   ├── gamedata/            # 内置种子库 + 声骸评分引擎
+│   └── settings/            # 设置持久化
+└── frontend/                # Vue3 应用（9 页面 + 设计系统）
+```
 
-## Exploring Wails3 Features
+## 数据与隐私
 
-Now that you have your project set up, it's time to explore the features that Wails3 offers:
+- 抽卡数据保存在 `%USERPROFILE%\.amc\data\{UID}\gacha_data.json`，与 Mac 版 aMC 同构互通
+- 库街区凭证保存在 `%USERPROFILE%\.amc\kurobbs.json`（仅本机，DPAPI 加密在规划中）
+- 仅读取本地游戏日志与官方接口，无遥测、无第三方上传
 
-1. **Check out the examples**: The best way to learn is by example. Visit the `examples` directory in the `v3/examples` directory to see various sample applications.
+## 合规红线
 
-2. **Run an example**: To run any of the examples, navigate to the example's directory and use:
+不做帧率解锁、内存读取、自动战斗等任何修改游戏行为的功能。仅：读日志、调官方接口、本地统计展示、拉起官方进程。
 
-   ```
-   go run .
-   ```
+## ⏸ 待真人测试清单
 
-   Note: Some examples may be under development during the alpha phase.
+以下功能代码已完成但因需要真实环境/账号，尚未实测：
 
-3. **Explore the documentation**: Visit the [Wails3 documentation](https://v3.wails.io/) for in-depth guides and API references.
-
-4. **Join the community**: Have questions or want to share your progress? Join the [Wails Discord](https://discord.gg/JDdSxwjhGf) or visit the [Wails discussions on GitHub](https://github.com/wailsapp/wails/discussions).
-
-## Project Structure
-
-Take a moment to familiarize yourself with your project structure:
-
-- `frontend/`: Contains your frontend code (HTML, CSS, JavaScript/TypeScript)
-- `main.go`: The entry point of your Go backend
-- `app.go`: Define your application structure and methods here
-- `wails.json`: Configuration file for your Wails project
-
-## Next Steps
-
-1. Modify the frontend in the `frontend/` directory to create your desired UI.
-2. Add backend functionality in `main.go`.
-3. Use `wails3 dev` to see your changes in real-time.
-4. When ready, build your application with `wails3 build`.
-
-Happy coding with Wails3! If you encounter any issues or have questions, don't hesitate to consult the documentation or reach out to the Wails community.
+1. 库街区短信验证码登录（需要真实手机号）
+2. 游戏日志实抓全流程（需要启动《鸣潮》并打开唤取记录页）
+3. 托盘图标与菜单交互（需要查看任务栏）
+4. 开机自启实际生效（需要重启验证）
+5. 每日自动签到定时触发（需要跨天观察）
