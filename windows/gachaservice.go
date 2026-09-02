@@ -25,12 +25,13 @@ type AccountSummary struct {
 
 // AccountDetail 打开的账号详情。
 type AccountDetail struct {
-	UID       string             `json:"uid"`
-	SvrArea   string             `json:"svrArea"`
-	FetchedAt string             `json:"fetchedAt"`
-	Stats     gacha.OverallStats `json:"stats"`
-	Dist      map[string][]int   `json:"dist"`
-	Recent5   []RecentItem       `json:"recent5"`
+	UID        string                  `json:"uid"`
+	SvrArea    string                  `json:"svrArea"`
+	FetchedAt  string                  `json:"fetchedAt"`
+	Stats      gacha.OverallStats      `json:"stats"`
+	Dist       map[string][]int        `json:"dist"`
+	Recent5    []RecentItem            `json:"recent5"`
+	Footprints []gacha.BannerFootprint `json:"footprints"`
 }
 
 // RecentItem 最近 5★ 列表项；Gap 为与上一个 5★ 的间隔（-1 表示窗口内无前序 5★）。

@@ -21,6 +21,7 @@ export interface AccountDetail {
     "stats": gacha$0.OverallStats;
     "dist": { [_ in string]?: number[] | null } | null;
     "recent5": RecentItem[] | null;
+    "footprints": gacha$0.BannerFootprint[] | null;
 }
 
 /**

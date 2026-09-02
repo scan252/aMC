@@ -17,27 +17,27 @@ const (
 
 // PoolStats 单卡池统计。
 type PoolStats struct {
-	PoolType   int    `json:"poolType"`
-	PoolName   string `json:"poolName"`
-	Total      int    `json:"total"`      // 本窗口内记录数
-	Count5     int    `json:"count5"`     // 5★ 数量
-	Count4     int    `json:"count4"`     // 4★ 数量
-	Count3     int    `json:"count3"`     // 3★ 数量
-	AvgPity    float64 `json:"avgPity"`   // 平均出金抽数（0 表示样本不足）
-	Pity       int    `json:"pity"`       // 当前已垫抽数
-	PityIsFloor bool  `json:"pityIsFloor"` // true 表示窗口内无 5★，pity 为下界
-	Last5Name  string `json:"last5Name"`  // 最近 5★ 名称
-	Last5Time  string `json:"last5Time"`
+	PoolType    int     `json:"poolType"`
+	PoolName    string  `json:"poolName"`
+	Total       int     `json:"total"`       // 本窗口内记录数
+	Count5      int     `json:"count5"`      // 5★ 数量
+	Count4      int     `json:"count4"`      // 4★ 数量
+	Count3      int     `json:"count3"`      // 3★ 数量
+	AvgPity     float64 `json:"avgPity"`     // 平均出金抽数（0 表示样本不足）
+	Pity        int     `json:"pity"`        // 当前已垫抽数
+	PityIsFloor bool    `json:"pityIsFloor"` // true 表示窗口内无 5★，pity 为下界
+	Last5Name   string  `json:"last5Name"`   // 最近 5★ 名称
+	Last5Time   string  `json:"last5Time"`
 }
 
 // OverallStats 全账号统计。
 type OverallStats struct {
-	Total      int         `json:"total"`
-	Count5     int         `json:"count5"`
-	Count4     int         `json:"count4"`
-	AvgPity    float64     `json:"avgPity"`
-	LuckIndex  float64     `json:"luckIndex"` // 期望/实际，>1 偏欧 <1 偏非
-	Pools      []PoolStats `json:"pools"`
+	Total     int         `json:"total"`
+	Count5    int         `json:"count5"`
+	Count4    int         `json:"count4"`
+	AvgPity   float64     `json:"avgPity"`
+	LuckIndex float64     `json:"luckIndex"` // 期望/实际，>1 偏欧 <1 偏非
+	Pools     []PoolStats `json:"pools"`
 }
 
 // ComputeStats 计算指定卡池记录的整体统计。
@@ -176,4 +176,74 @@ func bucketIndex(n int) int {
 
 func itoa(n int) string {
 	return strconv.Itoa(n)
+}
+
+// 标准池常驻 5★（歪出这些角色不构成 UP 卡池足迹）。
+var standardFiveStars = map[string]struct{}{
+	"维里奈": {}, "卡卡罗": {}, "安可": {}, "凌阳": {}, "鉴心": {},
+}
+
+// BannerFootprint 卡池足迹：从本地数据推断的一次 UP 角色获取周期。
+type BannerFootprint struct {
+	Pool      int    `json:"pool"`
+	PoolName  string `json:"poolName"`
+	Name      string `json:"name"`
+	FirstSeen string `json:"firstSeen"`
+	LastSeen  string `json:"lastSeen"`
+	Count     int    `json:"count"`
+}
+
+// BannerFootprints 按活动卡池（1/2）统计限定 5★ 的获取足迹，按首次获取时间降序。
+func BannerFootprints(data *GachaData) []BannerFootprint {
+	type agg struct {
+		first, last string
+		count       int
+	}
+	seen := map[int]map[string]*agg{}
+
+	for _, poolType := range []int{1, 2} {
+		key := itoa(poolType)
+		records := data.Pools[key]
+		if len(records) == 0 {
+			continue
+		}
+		byName := map[string]*agg{}
+		for _, r := range records {
+			if r.QualityLevel != 5 {
+				continue
+			}
+			if _, isStandard := standardFiveStars[r.Name]; isStandard {
+				continue
+			}
+			a, ok := byName[r.Name]
+			if !ok {
+				a = &agg{first: r.Time, last: r.Time}
+				byName[r.Name] = a
+			}
+			if r.Time < a.first {
+				a.first = r.Time
+			}
+			if r.Time > a.last {
+				a.last = r.Time
+			}
+			a.count++
+		}
+		seen[poolType] = byName
+	}
+
+	var out []BannerFootprint
+	for poolType, byName := range seen {
+		for name, a := range byName {
+			out = append(out, BannerFootprint{
+				Pool:      poolType,
+				PoolName:  PoolTypeNames[poolType],
+				Name:      name,
+				FirstSeen: a.first,
+				LastSeen:  a.last,
+				Count:     a.count,
+			})
+		}
+	}
+	sort.SliceStable(out, func(i, j int) bool { return out[i].FirstSeen > out[j].FirstSeen })
+	return out
 }
